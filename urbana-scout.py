@@ -42,7 +42,7 @@ def scrape_data(url, timestamp=datetime.datetime.now()):
     except IOError as e:
         data = requests.get(
             url,
-            headers={'User-Agent': fake_useragent.UserAgent().chrome},
+            headers={'User-Agent': fake_useragent.UserAgent().random},
             )
         with open(data_file, 'w') as f:
             f.write(data.text)
