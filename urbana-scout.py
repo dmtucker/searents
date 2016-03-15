@@ -95,22 +95,12 @@ def _show_listings(listings, graphical=False):
         color = iter(cm.rainbow(numpy.linspace(0, 1, len(all_units))))
         for unit in all_units:
             unit_listing = _extract_listings_for_unit(listings, unit)
-            pyplot.plot(
-                [_timestamp_to_float(l['timestamp']) for l in unit_listing],
-                [_price_to_float(l['price']) for l in unit_listing],
-                c=next(color),
-                label='unit {0} ({1})'.format(
-                    unit,
-                    unit_listing[0]['floorplan'],
-                    ),
-                linewidth=2,
-                )
-            '''
             pyplot.plot_date(
                 _timestamps_to_plottable_dates(
                     [l['timestamp'] for l in unit_listing],
                     ),
                 [_price_to_float(l['price']) for l in unit_listing],
+                'bo-',
                 c=next(color),
                 label='unit {0} ({1})'.format(
                     unit,
@@ -118,7 +108,6 @@ def _show_listings(listings, graphical=False):
                     ),
                 linewidth=2,
                 )
-            '''
         pyplot.title('Apartment Prices Over Time')
         pyplot.xlabel('Time')
         pyplot.ylabel('Price')
