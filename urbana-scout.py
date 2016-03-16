@@ -13,6 +13,18 @@ import requests
 
 def cli(parser=argparse.ArgumentParser()):
     parser.add_argument(
+        "--newest",
+        help="Specify the newest listings to include (requires -p).",
+    )
+    parser.add_argument(
+        "--oldest",
+        help="Specify the oldest listings to include (requires -p).",
+    )
+    parser.add_argument(
+        "-f", "--floorplan",
+        help="Print only units with the specified floorplan (requires -p).",
+    )
+    parser.add_argument(
         "-g", "--graphical",
         help="Print listings.json graphically.",
         default=False,
@@ -65,17 +77,45 @@ def _extract_listings_for_unit(listings, unit):
     return extracted
 
 
-def _all_units_in_listings(listings, sort=True):
+def _all_units_in_listings(listings, sort=True, floorplan=None):
     units = []
     for listing in listings:
-        if listing['unit'] not in units:
-            units.append(listing['unit'])
+        if floorplan is None or listing['floorplan'][-1] in floorplan:
+            if listing['unit'] not in units:
+                units.append(listing['unit'])
     return sorted(units) if sort else units
 
 
+def _filter_listings_by_age(listings, oldest=None, newest=None):
+    if oldest is None and newest is None:
+        return listings
+    filtered = []
+    if oldest is not None:
+        oldest_datetime = _timestamp_to_datetime(oldest)
+        for listing in listings:
+            if _timestamp_to_datetime(listing['timestamp']) >= oldest_datetime:
+                filtered.append(listing)
+        listings = filtered
+    if newest is not None:
+        filtered = []
+        newest_datetime = _timestamp_to_datetime(newest)
+        for listing in listings:
+            if _timestamp_to_datetime(listing['timestamp']) < newest_datetime:
+                filtered.append(listing)
+        listings = filtered
+    return filtered
+
+
+def _timestamp_to_datetime(timestamp):
+    try:
+        return datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f')
+    except ValueError:
+        return datetime.datetime.strptime(timestamp, '%Y-%m-%d')
+
+
 def _timestamp_to_float(timestamp):
-    t = datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f')
-    return (t-datetime.datetime(1970, 1, 1)).total_seconds()
+    epoch = datetime.datetime(1970, 1, 1)
+    return (_timestamp_to_datetime(timestamp)-epoch).total_seconds()
 
 
 def _timestamps_to_plottable_dates(timestamps):
@@ -89,9 +129,10 @@ def _price_to_float(price):
     return float(price.replace('$', '').replace(',', ''))
 
 
-def _show_listings(listings, graphical=False):
+def _show_listings(listings, graphical=False, floorplan=None):
+
     if graphical:
-        all_units = _all_units_in_listings(listings)
+        all_units = _all_units_in_listings(listings, floorplan=floorplan)
         color = iter(cm.rainbow(numpy.linspace(0, 1, len(all_units))))
         for unit in all_units:
             unit_listing = _extract_listings_for_unit(listings, unit)
@@ -137,7 +178,15 @@ def main(args):
     except IOError as e:
         listings = []
     if args.show_listings:
-        _show_listings(listings, graphical=args.graphical)
+        _show_listings(
+            _filter_listings_by_age(
+                listings,
+                oldest=args.oldest,
+                newest=args.newest,
+                ),
+            graphical=args.graphical,
+            floorplan=args.floorplan,
+            )
         return
     new_listings = []
 
@@ -155,7 +204,11 @@ def main(args):
                 'floorplan': _get_urbana_floorplan(lines, i+1),
                 })
 
-    _show_listings(new_listings, graphical=args.graphical)
+    _show_listings(
+        new_listings,
+        graphical=args.graphical,
+        floorplan=args.floorplan,
+        )
     listings += new_listings
     with open(listings_file, 'w') as f:
         json.dump(listings, f)
