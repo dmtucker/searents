@@ -129,10 +129,14 @@ def _price_to_float(price):
     return float(price.replace('$', '').replace(',', ''))
 
 
-def _show_listings(listings, graphical=False, floorplan=None):
+def _show_listings(listings, graphical=False, floorplan=None, sort=True):
 
     if graphical:
-        all_units = _all_units_in_listings(listings, floorplan=floorplan)
+        all_units = _all_units_in_listings(
+            listings,
+            floorplan=floorplan,
+            sort=sort,
+            )
         color = iter(cm.rainbow(numpy.linspace(0, 1, len(all_units))))
         for unit in all_units:
             unit_listing = _extract_listings_for_unit(listings, unit)
@@ -158,6 +162,8 @@ def _show_listings(listings, graphical=False, floorplan=None):
         pyplot.legend(loc='best')
         pyplot.show()
     else:
+        if sort:
+            listings = sorted(listings, key=lambda k: k['unit'])
         for listing in listings:
             print(
                 'timestamp: {0}, unit: {1}, price: {2}, floorplan: {3}'.format(
