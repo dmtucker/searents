@@ -153,6 +153,11 @@ def _show_listings(listings, graphical=False, floorplan=None, sort=True):
                     ),
                 linewidth=2,
                 )
+            pyplot.text(
+                _timestamps_to_plottable_dates([unit_listing[-1]['timestamp']]),
+                _price_to_float(unit_listing[-1]['price']),
+                'unit {0} ({1})'.format(unit, unit_listing[-1]['price']),
+                )
         pyplot.title('Apartment Prices Over Time')
         pyplot.xlabel('Time')
         pyplot.ylabel('Price')
