@@ -223,7 +223,7 @@ def main(args):
         print('Parsing {0} lines...'.format(len(lines)))
     for i in range(len(lines)):
         line = lines[i]
-        if ' <!--' in line:
+        if '<!-- ledgerId' in line:
             if args.verbose:
                 print('Unit found on line {0}: [{1}]'.format(i, line))
                 print('\tunit: {0}'.format(line.split(' ')[-2]))
