@@ -36,6 +36,12 @@ def cli(parser=argparse.ArgumentParser()):
         default=False,
         action="store_true"
         )
+    parser.add_argument(
+        "-v", "--verbose",
+        help="Print the gory details.",
+        default=False,
+        action="store_true"
+        )
     return parser
 
 
@@ -183,11 +189,17 @@ def _show_listings(listings, graphical=False, floorplan=None, sort=True):
 def main(args):
 
     listings_file = relative_path('listings.json')
+    if args.verbose:
+        print('Reading {0}...'.format(listings_file))
     try:
         with open(listings_file, 'r') as f:
             listings = json.load(f)
     except IOError as e:
+        if args.verbose:
+            print('{0} does not exist.'.format(listings_file))
         listings = []
+    if args.verbose:
+        print('{0} listings were found.'.format(len(listings)))
     if args.show_listings:
         _show_listings(
             _filter_listings_by_age(
@@ -204,10 +216,26 @@ def main(args):
     data, timestamp = scrape_data(
         'http://www.equityapartments.com/seattle/ballard/urbana-apartments',
         )
+    if args.verbose:
+        print('New data scraped at {0}.'.format(timestamp))
     lines = data.split('\n')
+    if args.verbose:
+        print('Parsing {0} lines...'.format(len(lines)))
     for i in range(len(lines)):
         line = lines[i]
         if ' <!--' in line:
+            if args.verbose:
+                print('Unit found on line {0}: [{1}]'.format(i, line))
+                print('\tunit: {0}'.format(line.split(' ')[-2]))
+                print('Price found on line {0}: [{1}]'.format(i+7, lines[i+7]))
+                print(
+                    '\tprice: {0}'.format(
+                        lines[i+7].split('>')[1].split('<')[0],
+                        ),
+                    )
+                print(
+                    'floorplan: {0}'.format(_get_urbana_floorplan(lines, i+1)),
+                    )
             new_listings.append({
                 'timestamp': str(timestamp),
                 'unit': line.split(' ')[-2],
@@ -215,12 +243,16 @@ def main(args):
                 'floorplan': _get_urbana_floorplan(lines, i+1),
                 })
 
+    if args.verbose:
+        print('{0} new listings were found.'.format(len(new_listings)))
     _show_listings(
         new_listings,
         graphical=args.graphical,
         floorplan=args.floorplan,
         )
     listings += new_listings
+    if args.verbose:
+        print('Writing {0}...'.format(listings_file))
     with open(listings_file, 'w') as f:
         json.dump(listings, f)
 
