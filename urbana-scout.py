@@ -225,9 +225,17 @@ def main(args):
         line = lines[i]
         if '<!-- ledgerId' in line:
             if args.verbose:
-                print('Unit found on line {0}: [{1}]'.format(i, line))
+                print('-'*4)
+                print(
+                    'Unit found on line {0}: [{1}]'.format(i, line.strip()),
+                    )
                 print('\tunit: {0}'.format(line.split(' ')[-2]))
-                print('Price found on line {0}: [{1}]'.format(i+7, lines[i+7]))
+                print(
+                    'Price found on line {0}: [{1}]'.format(
+                        i+7,
+                        lines[i+7].strip(),
+                        ),
+                    )
                 print(
                     '\tprice: {0}'.format(
                         lines[i+7].split('>')[1].split('<')[0],
@@ -236,6 +244,7 @@ def main(args):
                 print(
                     'floorplan: {0}'.format(_get_urbana_floorplan(lines, i+1)),
                     )
+                print('-'*4)
             new_listings.append({
                 'timestamp': str(timestamp),
                 'unit': line.split(' ')[-2],
