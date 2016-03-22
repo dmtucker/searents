@@ -15,27 +15,27 @@ def cli(parser=argparse.ArgumentParser()):
     parser.add_argument(
         "--newest",
         help="Specify the newest listings to include (requires -p).",
-    )
+        )
     parser.add_argument(
         "--oldest",
         help="Specify the oldest listings to include (requires -p).",
-    )
+        )
     parser.add_argument(
         "-f", "--floorplan",
         help="Print only units with the specified floorplan (requires -p).",
-    )
+        )
     parser.add_argument(
         "-g", "--graphical",
         help="Print listings.json graphically.",
         default=False,
         action="store_true"
-    )
+        )
     parser.add_argument(
         "-p", "--show-listings",
         help="Pretty print listings.json only.",
         default=False,
         action="store_true"
-    )
+        )
     return parser
 
 
