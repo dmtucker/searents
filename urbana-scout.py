@@ -67,10 +67,17 @@ def scrape_data(url, timestamp=datetime.datetime.now()):
         return data.text, timestamp
 
 
-def _get_urbana_floorplan(lines, offset):
+def _get_urbana_floorplan(lines, offset, verbose=False):
     j = offset
     while ' <!--' not in lines[j]:
         if '<img' in lines[j]:
+            if verbose:
+                print(
+                    'Floorplan found on line {0}: [{1}]'.format(
+                        j,
+                        lines[j].strip(),
+                        ),
+                    )
             return lines[j].split('alt="')[1].split('"')[0]
         j += 1
 
@@ -242,7 +249,9 @@ def main(args):
                         ),
                     )
                 print(
-                    'floorplan: {0}'.format(_get_urbana_floorplan(lines, i+1)),
+                    '\tfloorplan: {0}'.format(
+                        _get_urbana_floorplan(lines, i+1, verbose=True),
+                        ),
                     )
                 print('-'*4)
             new_listings.append({
