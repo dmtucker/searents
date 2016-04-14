@@ -177,7 +177,7 @@ def _show_listings(listings, graphical=False, floorplan=None, sort=True):
         pyplot.grid(b=True, which='major', color='k', linestyle='-')
         pyplot.grid(b=True, which='minor', color='k', linestyle=':')
         pyplot.minorticks_on()
-        pyplot.legend(loc='best')
+        pyplot.legend(loc='upper left', fontsize='small')
         pyplot.show()
     else:
         if sort:
