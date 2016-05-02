@@ -57,7 +57,7 @@ def scrape_data(url, timestamp=datetime.datetime.now()):
     try:
         with open(data_file, 'r') as f:
             raise Exception('SLOW DOWN!')
-    except IOError as e:
+    except FileNotFoundError as e:
         data = requests.get(
             url,
             headers={'User-Agent': fake_useragent.UserAgent().random},
@@ -201,7 +201,7 @@ def main(args):
     try:
         with open(listings_file, 'r') as f:
             listings = json.load(f)
-    except IOError as e:
+    except FileNotFoundError as e:
         if args.verbose:
             print('{0} does not exist.'.format(listings_file))
         listings = []
