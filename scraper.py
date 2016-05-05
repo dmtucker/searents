@@ -152,38 +152,42 @@ class Survey(list):
         pyplot.show()
 
 
-def _get_urbana_floorplan(lines, offset):  # TODO This should be merged into parsed_urbana_listings.
-    j = offset
-    while ' <!--' not in lines[j]:
-        if '<img' in lines[j]:
-            if ARGS.tmi:
-                print('Floorplan found on line {0}: [{1}]'.format(j, lines[j].strip()))
-            return lines[j].split('alt="')[1].split('"')[0]
-        j += 1
-
 def parsed_urbana_listings(html, timestamp):
     """Parse HTML from Urbana's website into unit listings."""
     listings = Survey()
     lines = html.split('\n')
     for i, line in enumerate(lines):
         if '<!-- ledgerId' in line:
+
+            floorplan_i = i+1
+            while ' <!--' not in lines[floorplan_i]:
+                if '<img' in lines[floorplan_i]:
+                    break
+                floorplan_i += 1
+
             listing = {
                 'timestamp': timestamp,
                 'unit': line.split(' ')[-2],
                 'price': float(
                     lines[i+7].split('>')[1].split('<')[0].replace('$', '').replace(',', ''),
                 ),
-                'floorplan': _get_urbana_floorplan(lines, i+1),
+                'floorplan': lines[floorplan_i].split('alt="')[1].split('"')[0],
             }
             listings.append(listing)
+
             if ARGS.tmi:
                 print('-'*4)
                 print('Unit found on line {0}: [{1}]'.format(i, line.strip()))
                 print('\tunit: {0}'.format(listing['unit']))
                 print('Price found on line {0}: [{1}]'.format(i+7, lines[i+7].strip()))
                 print('\tprice: {0}'.format(listing['price']))
+                print('Floorplan found on line {0}: [{1}]'.format(
+                    floorplan_i,
+                    lines[floorplan_i].strip(),
+                ))
                 print('\tfloorplan: {0}'.format(listing['floorplan']))
                 print('-'*4)
+
     return listings
 
 
