@@ -126,7 +126,7 @@ class Survey(list):
         """Plot a Survey."""
         units = set([listing['unit'] for listing in self])
         color = iter(cm.rainbow(numpy.linspace(0, 1, len(units))))  # pylint: disable=no-member
-        for unit in units:
+        for unit in sorted(units):
             unit_listings = [listing for listing in self if listing['unit'] == unit]
             pyplot.plot_date(
                 matplotlib.dates.date2num([listing['timestamp'] for listing in unit_listings]),
