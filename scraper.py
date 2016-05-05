@@ -8,6 +8,7 @@ from __future__ import print_function
 import argparse
 import datetime
 import json
+import os
 
 import fake_useragent
 import requests
@@ -192,7 +193,7 @@ def parsed_urbana_listings(html, timestamp):
     return listings
 
 
-def get_new_listings(verbose=False):
+def get_new_listings(verbose=False, loc=os.getcwd()):
     """Scrape new listings from Urbana's website."""
     url = 'http://www.equityapartments.com/seattle/ballard/urbana-apartments'
     user_agent = fake_useragent.UserAgent().random
@@ -204,7 +205,7 @@ def get_new_listings(verbose=False):
     html = response.text
     timestamp = datetime.datetime.now()
 
-    html_file = 'scrapes/{0}.html'.format(timestamp).replace(' ', '_')
+    html_file = os.path.join(loc, 'scrapes', '{0}.html'.format(timestamp).replace(' ', '_'))
     if verbose:
         print('Saving scraped HTML to {0}...'.format(html_file))
     with open(html_file, 'w') as f:
@@ -243,7 +244,7 @@ def main(args):
 
         if args.verbose:
             print('Getting new listings...')
-        new_listings = get_new_listings(verbose=args.verbose)
+        new_listings = get_new_listings(verbose=args.verbose, loc=os.path.dirname(args.file))
 
         if args.verbose:
             print('{0} new listings were found.'.format(len(new_listings)))
