@@ -14,6 +14,7 @@ import requests
 
 
 def cli(parser=argparse.ArgumentParser()):
+    """ Specify and get command-line parameters. """
     parser.add_argument(
         "-f", "--file",
         default="survey.json",
