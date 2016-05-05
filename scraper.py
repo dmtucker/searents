@@ -109,7 +109,7 @@ class Survey(list):
         serializable = list(self)
         for listing in serializable:
             listing['timestamp'] = listing['timestamp'].strftime(self.datetime_format)
-        return json.dumps(self, indent=4)
+        return json.dumps(self, indent=4, sort_keys=True)
 
     def __str__(self):
         return '\n'.join([
