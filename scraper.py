@@ -208,7 +208,7 @@ def get_new_listings(verbose=False, loc=os.getcwd()):
     html_file = os.path.join(loc, 'scrapes', '{0}.html'.format(timestamp).replace(' ', '_'))
     if verbose:
         print('Saving scraped HTML to {0}...'.format(html_file))
-    with open(html_file, 'w') as f:
+    with open(html_file, 'w', encoding='utf-8') as f:
         f.write(html)
 
     if verbose:
@@ -223,7 +223,7 @@ def main(args):
     if args.verbose:
         print('Reading {0}...'.format(args.file), end=' ')
     try:
-        with open(args.file, 'r') as f:
+        with open(args.file, 'r', encoding='utf-8') as f:
             survey = Survey.deserialize(f.read())
         if args.verbose:
             print('{0} listings'.format(len(survey)))
@@ -253,7 +253,7 @@ def main(args):
         if args.verbose:
             print('Writing {0}...'.format(args.file))
         survey += new_listings
-        with open(args.file, 'w') as f:
+        with open(args.file, 'w', encoding='utf-8') as f:
             f.write(survey.serialize())
 
 
