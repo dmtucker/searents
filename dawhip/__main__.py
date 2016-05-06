@@ -2,16 +2,16 @@
 
 """Web Scraper for Urbana Apartments"""
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import argparse
 import datetime
 import json
+import mimetypes
 import os
 
 import fake_useragent
 import requests
+
+from urbana import UrbanaScraper
 
 
 def cli(parser=argparse.ArgumentParser()):
@@ -40,38 +40,12 @@ def cli(parser=argparse.ArgumentParser()):
         action="store_true"
     )
     parser.add_argument(
-        "--tmi",
+        "--debug",
         help="Print parsing details (ignored with -r).",
         default=False,
         action="store_true"
     )
     return parser
-
-
-def _timestamp_to_datetime(timestamp):  # TODO Consider merging this into _filter_listings_by_age.
-    try:
-        return datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f')
-    except ValueError:
-        return datetime.datetime.strptime(timestamp, '%Y-%m-%d')
-
-def _filter_listings_by_age(listings, oldest=None, newest=None):  # TODO Implement filtering.
-    if oldest is None and newest is None:
-        return listings
-    filtered = []
-    if oldest is not None:
-        oldest_datetime = _timestamp_to_datetime(oldest)
-        for listing in listings:
-            if _timestamp_to_datetime(listing['timestamp']) >= oldest_datetime:
-                filtered.append(listing)
-        listings = filtered
-    if newest is not None:
-        filtered = []
-        newest_datetime = _timestamp_to_datetime(newest)
-        for listing in listings:
-            if _timestamp_to_datetime(listing['timestamp']) < newest_datetime:
-                filtered.append(listing)
-        listings = filtered
-    return filtered
 
 
 class Survey(list):
@@ -154,68 +128,6 @@ class Survey(list):
         pyplot.show()
 
 
-def parsed_urbana_listings(html, timestamp):
-    """Parse HTML from Urbana's website into unit listings."""
-    listings = Survey()
-    lines = html.split('\n')
-    for i, line in enumerate(lines):
-        if '<!-- ledgerId' in line:
-
-            floorplan_i = i+1
-            while ' <!--' not in lines[floorplan_i]:
-                if '<img' in lines[floorplan_i]:
-                    break
-                floorplan_i += 1
-
-            listing = {
-                'timestamp': timestamp,
-                'unit': line.split(' ')[-2],
-                'price': float(
-                    lines[i+7].split('>')[1].split('<')[0].replace('$', '').replace(',', ''),
-                ),
-                'floorplan': lines[floorplan_i].split('alt="')[1].split('"')[0],
-            }
-            listings.append(listing)
-
-            if ARGS.tmi:
-                print('-'*4)
-                print('Unit found on line {0}: [{1}]'.format(i, line.strip()))
-                print('\tunit: {0}'.format(listing['unit']))
-                print('Price found on line {0}: [{1}]'.format(i+7, lines[i+7].strip()))
-                print('\tprice: {0}'.format(listing['price']))
-                print('Floorplan found on line {0}: [{1}]'.format(
-                    floorplan_i,
-                    lines[floorplan_i].strip(),
-                ))
-                print('\tfloorplan: {0}'.format(listing['floorplan']))
-                print('-'*4)
-
-    return listings
-
-
-def get_new_listings(verbose=False, loc=os.getcwd()):
-    """Scrape new listings from Urbana's website."""
-    url = 'http://www.equityapartments.com/seattle/ballard/urbana-apartments'
-    user_agent = fake_useragent.UserAgent().random
-    if verbose:
-        print('Scraping {0} as {1}...'.format(url, user_agent))
-    response = requests.get(url, headers={'User-Agent': user_agent})
-    assert response.status_code == 200
-
-    html = response.text
-    timestamp = datetime.datetime.now()
-
-    html_file = os.path.join(loc, 'scrapes', '{0}.html'.format(timestamp).replace(' ', '_'))
-    if verbose:
-        print('Saving scraped HTML to {0}...'.format(html_file))
-    with open(html_file, 'w', encoding='utf-8') as f:
-        f.write(html)
-
-    if verbose:
-        print('Parsing scraped HTML...')
-    return parsed_urbana_listings(html, timestamp)
-
-
 def main(args):
     """Execute CLI commands."""
 
@@ -244,7 +156,14 @@ def main(args):
 
         if args.verbose:
             print('Getting new listings...')
-        new_listings = get_new_listings(verbose=args.verbose, loc=os.path.dirname(args.file))
+        new_listings = Survey(
+            UrbanaScraper(
+                verbose=args.verbose,
+                debug=args.debug,
+            ).scrape_listings(
+                dirpath=os.path.dirname(args.file),
+            )
+        )
 
         if args.verbose:
             print('{0} new listings were found.'.format(len(new_listings)))
@@ -259,8 +178,6 @@ def main(args):
 
 if __name__ == '__main__':
     ARGS = cli().parse_args()
-    if ARGS.tmi:
-        raise NotImplementedError()  # TODO
     if ARGS.graphical:
         # pylint: disable=wrong-import-position
         import matplotlib
