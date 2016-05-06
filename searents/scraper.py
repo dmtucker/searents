@@ -9,7 +9,7 @@ import requests
 
 
 class BaseScraper(object):
-           
+
     def scrape(self, url, headers=None, path=os.getcwd()):
         """GET a remote resource and save it."""
         response = requests.get(url, headers=headers)

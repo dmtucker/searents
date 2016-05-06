@@ -33,5 +33,5 @@ setup(
         'Intended Audience :: End Users/Desktop',
         'Programming Language :: Python :: 3',
         'Development Status :: 3 - Alpha',
-        ],
+    ],
 )

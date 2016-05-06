@@ -20,33 +20,36 @@ def UrbanaScraper(BaseScraper):
         for i, line in enumerate(lines):
             if '<!-- ledgerId' in line:
 
-                floorplan_i = i+1
+                listing = {'unit': line.split(' ')[-2]}
+                listings.append(listing)
+
+                price_i = i + 7
+                listing['price'] = float(
+                    lines[price_i].split('>')[1].split('<')[0].replace('$', '').replace(',', '')
+                )
+
+                floorplan_i = i + 1
                 while ' <!--' not in lines[floorplan_i]:
                     if '<img' in lines[floorplan_i]:
                         break
                     floorplan_i += 1
-
-                listing = {
-                    'unit': line.split(' ')[-2],
-                    'price': float(
-                        lines[i+7].split('>')[1].split('<')[0].replace('$', '').replace(',', ''),
-                    ),
-                    'floorplan': lines[floorplan_i].split('alt="')[1].split('"')[0],
-                }
-                listings.append(listing)
+                listing['floorplan'] = lines[floorplan_i].split('alt="')[1].split('"')[0],
 
                 if self.debug:
-                    print('-'*4)
+                    print('-' * 4)
                     print('Unit found on line {0}: [{1}]'.format(i, line.strip()))
                     print('\tunit: {0}'.format(listing['unit']))
-                    print('Price found on line {0}: [{1}]'.format(i+7, lines[i+7].strip()))
+                    print('Price found on line {0}: [{1}]'.format(
+                        price_i,
+                        lines[price_i].strip(),
+                    ))
                     print('\tprice: {0}'.format(listing['price']))
                     print('Floorplan found on line {0}: [{1}]'.format(
                         floorplan_i,
                         lines[floorplan_i].strip(),
                     ))
                     print('\tfloorplan: {0}'.format(listing['floorplan']))
-                    print('-'*4)
+                    print('-' * 4)
 
         return listings
 

@@ -62,9 +62,6 @@ class Survey(list):
     }
     """
 
-    # TODO Sort survey based on sort_key.
-    #for listing in sorted(self, key=lambda listing: listing[sort_key]) if sort else self:
-
     datetime_format = '%Y-%m-%d %H:%M:%S.%f'
 
     @classmethod
@@ -110,14 +107,14 @@ class Survey(list):
                 label='unit {0} ({1})'.format(
                     unit,
                     unit_listings[0]['floorplan'],
-                    ),
+                ),
                 linewidth=2,
-                )
+            )
             pyplot.text(
                 matplotlib.dates.date2num([unit_listings[-1]['timestamp']]),
                 unit_listings[-1]['price'],
                 'unit {0} ({1})'.format(unit, unit_listings[-1]['price']),
-                )
+            )
         pyplot.title('Apartment Prices Over Time')
         pyplot.xlabel('Time')
         pyplot.ylabel('Price')
