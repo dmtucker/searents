@@ -3,14 +3,10 @@
 """Web Scraper for Urbana Apartments"""
 
 import argparse
-import mimetypes
 import os
 
-import fake_useragent
-import requests
-
-from survey import RentSurvey
-from urbana import UrbanaScraper
+from .survey import RentSurvey
+from .urbana import UrbanaScraper
 
 
 def cli(parser=argparse.ArgumentParser()):
@@ -47,7 +43,7 @@ def cli(parser=argparse.ArgumentParser()):
     return parser
 
 
-def main(args):
+def main(args=cli().parse_args()):
     """Execute CLI commands."""
 
     survey = None
@@ -96,4 +92,4 @@ def main(args):
 
 
 if __name__ == '__main__':
-    main(cli().parse_args())
+    main()

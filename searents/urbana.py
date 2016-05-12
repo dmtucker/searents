@@ -1,17 +1,15 @@
-"""Web Scraper for Urbana Apartments"""
+"""Library for Scraping Urbana Apartments"""
 
 import os
 
 import fake_useragent
 
-from scraper import BaseScraper
+from .scraper import BaseScraper
 
 
-def UrbanaScraper(BaseScraper):
+class UrbanaScraper(BaseScraper):
 
-    def __init__(self, verbose=False, debug=False):
-        self.verbose = verbose
-        self.debug = debug
+    """Web Scraper for Urbana Apartments"""
 
     def parse(self, html):
         """Parse HTML from Urbana's website into unit listings."""
@@ -53,7 +51,7 @@ def UrbanaScraper(BaseScraper):
 
         return listings
 
-    def scrape_listings(dirpath=os.path.join(os.getcwd(), 'urbana_scrapes')):
+    def scrape_listings(self, dirpath=os.path.join(os.getcwd(), 'urbana_scrapes')):
         """Scrape new listings from Urbana's website."""
 
         if not os.path.exists(dirpath):
@@ -65,7 +63,7 @@ def UrbanaScraper(BaseScraper):
         user_agent = fake_useragent.UserAgent().random
         if self.verbose:
             print('Scraping {0} (as {1}) to {2}...'.format(url, user_agent, dirpath))
-        response, timestamp = scrape(url, headers={'User-Agent': user_agent}, path=dirpath)
+        response, timestamp = self.scrape(url, headers={'User-Agent': user_agent}, path=dirpath)
         assert response.status_code == 200
 
         if self.verbose:

@@ -25,6 +25,11 @@ setup(
     url='https://github.com/dmtucker/searents',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     include_package_data=True,
+    install_requires=[
+        'fake_useragent>=0.0.8',
+        'matplotlib>=1.5.1',
+        'requests>=2.9.1',
+    ],
     entry_points={'console_scripts': ['searents = searents.__main__:main']},
     keywords='rent scraper',
     classifiers=[

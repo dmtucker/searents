@@ -1,11 +1,14 @@
-FROM debian:latest
+FROM python:3
 MAINTAINER david.michael.tucker@gmail.com
-RUN apt-get update && apt-get install -y \
-    python-matplotlib \
-    python-numpy \
-    python-pip
-RUN pip install \
-    fake-useragent \
-    requests
-COPY . /
-ENTRYPOINT ["python"]
+
+RUN pip install --upgrade pip
+
+# Build and install the project.
+WORKDIR /src
+COPY . .
+RUN rm -rf dist
+RUN python setup.py sdist
+RUN pip install dist/*
+WORKDIR /
+
+ENTRYPOINT ["searents"]
