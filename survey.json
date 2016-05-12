@@ -30616,5 +30616,1157 @@
         "price": 2757.0,
         "timestamp": "2016-05-12 00:46:52.553659",
         "unit": "342"
+    },
+    {
+        "floorplan": [
+            "Studio G"
+        ],
+        "price": 1384.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "240"
+    },
+    {
+        "floorplan": [
+            "Studio F"
+        ],
+        "price": 1520.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "337"
+    },
+    {
+        "floorplan": [
+            "Studio I"
+        ],
+        "price": 1527.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "321"
+    },
+    {
+        "floorplan": [
+            "Studio H"
+        ],
+        "price": 1584.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "821"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1606.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "618"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1704.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "816"
+    },
+    {
+        "floorplan": [
+            "One Bedroom B"
+        ],
+        "price": 1931.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "329"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2095.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "720"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2120.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "520"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2138.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "311"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2152.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "711"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2165.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "508"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2177.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "610"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2180.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "411"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom K"
+        ],
+        "price": 2629.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "550"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom H"
+        ],
+        "price": 2757.0,
+        "timestamp": "2016-05-12 01:00:07.890097",
+        "unit": "342"
+    },
+    {
+        "floorplan": [
+            "Studio G"
+        ],
+        "price": 1384.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "240"
+    },
+    {
+        "floorplan": [
+            "Studio F"
+        ],
+        "price": 1520.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "337"
+    },
+    {
+        "floorplan": [
+            "Studio I"
+        ],
+        "price": 1527.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "321"
+    },
+    {
+        "floorplan": [
+            "Studio H"
+        ],
+        "price": 1584.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "821"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1606.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "618"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1704.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "816"
+    },
+    {
+        "floorplan": [
+            "One Bedroom B"
+        ],
+        "price": 1931.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "329"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2095.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "720"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2120.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "520"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2138.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "311"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2152.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "711"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2165.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "508"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2177.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "610"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2180.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "411"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom K"
+        ],
+        "price": 2629.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "550"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom H"
+        ],
+        "price": 2757.0,
+        "timestamp": "2016-05-12 02:00:08.318610",
+        "unit": "342"
+    },
+    {
+        "floorplan": [
+            "Studio G"
+        ],
+        "price": 1384.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "240"
+    },
+    {
+        "floorplan": [
+            "Studio F"
+        ],
+        "price": 1520.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "337"
+    },
+    {
+        "floorplan": [
+            "Studio I"
+        ],
+        "price": 1527.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "321"
+    },
+    {
+        "floorplan": [
+            "Studio H"
+        ],
+        "price": 1584.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "821"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1606.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "618"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1704.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "816"
+    },
+    {
+        "floorplan": [
+            "One Bedroom B"
+        ],
+        "price": 1931.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "329"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2095.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "720"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2120.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "520"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2138.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "311"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2152.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "711"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2165.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "508"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2177.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "610"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2180.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "411"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom K"
+        ],
+        "price": 2629.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "550"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom H"
+        ],
+        "price": 2757.0,
+        "timestamp": "2016-05-12 03:00:07.369572",
+        "unit": "342"
+    },
+    {
+        "floorplan": [
+            "Studio G"
+        ],
+        "price": 1384.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "240"
+    },
+    {
+        "floorplan": [
+            "Studio F"
+        ],
+        "price": 1520.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "337"
+    },
+    {
+        "floorplan": [
+            "Studio I"
+        ],
+        "price": 1527.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "321"
+    },
+    {
+        "floorplan": [
+            "Studio H"
+        ],
+        "price": 1584.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "821"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1606.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "618"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1704.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "816"
+    },
+    {
+        "floorplan": [
+            "One Bedroom B"
+        ],
+        "price": 1931.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "329"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2095.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "720"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2120.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "520"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2138.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "311"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2152.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "711"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2165.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "508"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2177.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "610"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2180.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "411"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom K"
+        ],
+        "price": 2629.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "550"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom H"
+        ],
+        "price": 2757.0,
+        "timestamp": "2016-05-12 04:00:07.783021",
+        "unit": "342"
+    },
+    {
+        "floorplan": [
+            "Studio G"
+        ],
+        "price": 1384.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "240"
+    },
+    {
+        "floorplan": [
+            "Studio F"
+        ],
+        "price": 1520.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "337"
+    },
+    {
+        "floorplan": [
+            "Studio I"
+        ],
+        "price": 1527.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "321"
+    },
+    {
+        "floorplan": [
+            "Studio H"
+        ],
+        "price": 1584.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "821"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1606.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "618"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1704.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "816"
+    },
+    {
+        "floorplan": [
+            "One Bedroom B"
+        ],
+        "price": 1931.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "329"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2095.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "720"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2120.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "520"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2138.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "311"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2152.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "711"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2165.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "508"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2177.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "610"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2180.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "411"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom K"
+        ],
+        "price": 2629.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "550"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom H"
+        ],
+        "price": 2757.0,
+        "timestamp": "2016-05-12 05:00:08.272758",
+        "unit": "342"
+    },
+    {
+        "floorplan": [
+            "Studio G"
+        ],
+        "price": 1384.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "240"
+    },
+    {
+        "floorplan": [
+            "Studio F"
+        ],
+        "price": 1520.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "337"
+    },
+    {
+        "floorplan": [
+            "Studio I"
+        ],
+        "price": 1527.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "321"
+    },
+    {
+        "floorplan": [
+            "Studio H"
+        ],
+        "price": 1584.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "821"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1606.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "618"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1704.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "816"
+    },
+    {
+        "floorplan": [
+            "One Bedroom B"
+        ],
+        "price": 1931.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "329"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2095.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "720"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2120.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "520"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2138.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "311"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2152.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "711"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2165.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "508"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2177.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "610"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2180.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "411"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom K"
+        ],
+        "price": 2629.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "550"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom H"
+        ],
+        "price": 2757.0,
+        "timestamp": "2016-05-12 06:00:07.918419",
+        "unit": "342"
+    },
+    {
+        "floorplan": [
+            "Studio G"
+        ],
+        "price": 1384.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "240"
+    },
+    {
+        "floorplan": [
+            "Studio F"
+        ],
+        "price": 1520.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "337"
+    },
+    {
+        "floorplan": [
+            "Studio I"
+        ],
+        "price": 1527.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "321"
+    },
+    {
+        "floorplan": [
+            "Studio H"
+        ],
+        "price": 1584.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "821"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1606.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "618"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1704.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "816"
+    },
+    {
+        "floorplan": [
+            "One Bedroom B"
+        ],
+        "price": 1931.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "329"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2095.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "720"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2120.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "520"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2138.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "311"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2152.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "711"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2165.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "508"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2177.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "610"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2180.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "411"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom K"
+        ],
+        "price": 2629.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "550"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom H"
+        ],
+        "price": 2757.0,
+        "timestamp": "2016-05-12 07:00:08.661766",
+        "unit": "342"
+    },
+    {
+        "floorplan": [
+            "Studio G"
+        ],
+        "price": 1384.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "240"
+    },
+    {
+        "floorplan": [
+            "Studio F"
+        ],
+        "price": 1520.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "337"
+    },
+    {
+        "floorplan": [
+            "Studio I"
+        ],
+        "price": 1527.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "321"
+    },
+    {
+        "floorplan": [
+            "Studio H"
+        ],
+        "price": 1584.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "821"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1606.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "618"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1704.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "816"
+    },
+    {
+        "floorplan": [
+            "One Bedroom B"
+        ],
+        "price": 1931.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "329"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2095.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "720"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2120.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "520"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2138.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "311"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2152.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "711"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2165.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "508"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2177.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "610"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2180.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "411"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom K"
+        ],
+        "price": 2629.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "550"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom H"
+        ],
+        "price": 2757.0,
+        "timestamp": "2016-05-12 08:00:25.893047",
+        "unit": "342"
+    },
+    {
+        "floorplan": [
+            "Studio G"
+        ],
+        "price": 1384.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "240"
+    },
+    {
+        "floorplan": [
+            "Studio F"
+        ],
+        "price": 1520.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "337"
+    },
+    {
+        "floorplan": [
+            "Studio I"
+        ],
+        "price": 1527.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "321"
+    },
+    {
+        "floorplan": [
+            "Studio H"
+        ],
+        "price": 1584.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "821"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1606.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "618"
+    },
+    {
+        "floorplan": [
+            "Open 1 Bedroom C"
+        ],
+        "price": 1704.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "816"
+    },
+    {
+        "floorplan": [
+            "One Bedroom B"
+        ],
+        "price": 1931.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "329"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2095.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "720"
+    },
+    {
+        "floorplan": [
+            "One Bedroom L"
+        ],
+        "price": 2120.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "520"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2138.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "311"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2152.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "711"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2165.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "508"
+    },
+    {
+        "floorplan": [
+            "One Bedroom Q"
+        ],
+        "price": 2177.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "610"
+    },
+    {
+        "floorplan": [
+            "One Bedroom O"
+        ],
+        "price": 2180.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "411"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom K"
+        ],
+        "price": 2629.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "550"
+    },
+    {
+        "floorplan": [
+            "Two Bedroom H"
+        ],
+        "price": 2757.0,
+        "timestamp": "2016-05-12 08:02:55.347734",
+        "unit": "342"
     }
 ]
