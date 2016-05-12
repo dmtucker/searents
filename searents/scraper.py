@@ -21,14 +21,15 @@ class BaseScraper(object):  # pylint: disable=too-few-public-methods
         timestamp = datetime.datetime.now()
         if path is not None:
             if os.path.isdir(path):
+                extension = mimetypes.guess_extension(
+                    response.headers['content-type'].split(';')[0],
+                    strict=False,
+                )
                 path = os.path.join(
                     path,
                     '{name}{extension}'.format(
                         name=str(timestamp).replace(' ', '_'),
-                        extension=mimetypes.guess_extension(
-                            response.headers['content-type'],
-                            strict=False,
-                        ),
+                        extension='' if extension is None else extension,
                     ),
                 )
             if self.verbose:
