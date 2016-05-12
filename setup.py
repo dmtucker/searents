@@ -14,6 +14,9 @@ import searents
 with open('README.rst') as readme_file:
     README = readme_file.read()
 
+with open('requirements.txt') as requirements_file:
+    REQUIREMENTS = requirements_file.read().splitlines()
+
 setup(
     name='searents',
     version=searents.__version__,
@@ -25,11 +28,7 @@ setup(
     url='https://github.com/dmtucker/searents',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     include_package_data=True,
-    install_requires=[
-        'fake_useragent>=0.0.8',
-        'matplotlib>=1.5.1',
-        'requests>=2.9.1',
-    ],
+    install_requires=REQUIREMENTS,
     entry_points={'console_scripts': ['searents = searents.__main__:main']},
     keywords='rent scraper',
     classifiers=[
