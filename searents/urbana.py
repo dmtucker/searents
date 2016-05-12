@@ -31,7 +31,7 @@ class UrbanaScraper(BaseScraper):
                     if '<img' in lines[floorplan_i]:
                         break
                     floorplan_i += 1
-                listing['floorplan'] = lines[floorplan_i].split('alt="')[1].split('"')[0],
+                listing['floorplan'] = lines[floorplan_i].split('alt="')[1].split('"')[0]
 
                 if self.debug:
                     print('-' * 4)
