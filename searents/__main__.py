@@ -76,7 +76,11 @@ def main(args=cli().parse_args()):
                 verbose=args.verbose,
                 debug=args.debug,
             ).scrape_listings(
-                dirpath=os.path.dirname(args.file),
+                dirpath=os.path.join(
+                    os.path.dirname(args.file),
+                    'searents_scrapes',
+                    'urbana',
+                ),
             )
         )
 

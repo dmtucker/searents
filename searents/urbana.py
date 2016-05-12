@@ -51,7 +51,7 @@ class UrbanaScraper(BaseScraper):
 
         return listings
 
-    def scrape_listings(self, dirpath=os.path.join(os.getcwd(), 'urbana_scrapes')):
+    def scrape_listings(self, dirpath=os.path.join(os.getcwd(), 'scrapes', 'urbana')):
         """Scrape new listings from Urbana's website."""
 
         if not os.path.exists(dirpath):
