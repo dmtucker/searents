@@ -10,7 +10,7 @@ SeaRents can be installed with pip.
 
 .. code:: sh
 
-    git clone https://github.com/dmtucker/searents
+    git clone https://gitlab.com/dmtucker/searents
     cd searents
     pip install .
 
