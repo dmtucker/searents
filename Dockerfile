@@ -4,9 +4,11 @@ MAINTAINER david.michael.tucker@gmail.com
 RUN pip install --upgrade pip
 RUN pip install pep8 pylint
 
-WORKDIR /src
+WORKDIR /tmp
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+
+WORKDIR /src
 COPY . .
 RUN pep8 setup.py
 RUN pylint setup.py
@@ -15,6 +17,4 @@ RUN pylint searents
 RUN rm -rf dist
 RUN python setup.py sdist
 RUN pip install dist/*
-WORKDIR /
-
 ENTRYPOINT ["searents"]
