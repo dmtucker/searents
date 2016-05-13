@@ -25,7 +25,7 @@ setup(
     author='David Tucker',
     author_email='david.michael.tucker@gmail.com',
     license='LGPLv2+',
-    url='https://github.com/dmtucker/searents',
+    url='https://gitlab.com/dmtucker/searents',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     include_package_data=True,
     install_requires=REQUIREMENTS,
