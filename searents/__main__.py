@@ -36,7 +36,7 @@ def cli(parser=argparse.ArgumentParser()):
     )
     parser.add_argument(
         "--debug",
-        help="Print parsing details (ignored with -r).",
+        help="Print parsing details.",
         default=False,
         action="store_true"
     )
@@ -55,9 +55,7 @@ def main(args=cli().parse_args()):
         if args.verbose:
             print('{0} listings'.format(len(survey)))
     except FileNotFoundError:
-        if args.read_only:
-            raise
-        elif args.verbose:
+        if args.verbose:
             print('not found')
         survey = RentSurvey()
     assert survey is not None
@@ -67,32 +65,29 @@ def main(args=cli().parse_args()):
             survey.visualize()
         else:
             print(survey)
-    else:
+        return
 
-        if args.verbose:
-            print('Getting new listings...')
-        new_listings = RentSurvey(
-            UrbanaScraper(
-                verbose=args.verbose,
-                debug=args.debug,
-            ).scrape_listings(
-                dirpath=os.path.join(
-                    os.path.dirname(args.file),
-                    'searents_scrapes',
-                    'urbana',
-                ),
-            )
+    scrape_cache = os.path.join(os.path.dirname(args.file), 'searents_scrapes', 'urbana')
+
+    if args.verbose:
+        print('Getting new listings...')
+    new_listings = RentSurvey(
+        UrbanaScraper(
+            verbose=args.verbose,
+            debug=args.debug,
+        ).scrape_listings(
+            dirpath=scrape_cache,
         )
+    )
+    if args.verbose:
+        print('{0} new listings were found.'.format(len(new_listings)))
+    print(new_listings)
 
-        if args.verbose:
-            print('{0} new listings were found.'.format(len(new_listings)))
-        print(new_listings)
-
-        if args.verbose:
-            print('Writing {0}...'.format(args.file))
-        survey += new_listings
-        with open(args.file, 'w', encoding='utf-8') as f:
-            f.write(survey.serialize())
+    if args.verbose:
+        print('Writing {0}...'.format(args.file))
+    survey += new_listings
+    with open(args.file, 'w', encoding='utf-8') as f:
+        f.write(survey.serialize())
 
 
 if __name__ == '__main__':
