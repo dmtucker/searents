@@ -5,6 +5,7 @@ import os
 import fake_useragent
 
 from .scraper import BaseScraper
+from .survey import RentSurvey
 
 
 class UrbanaScraper(BaseScraper):
@@ -12,17 +13,15 @@ class UrbanaScraper(BaseScraper):
     """Web Scraper for Urbana Apartments"""
 
     def parse(self, html):
-        """Parse HTML from Urbana's website into unit listings."""
-        listings = []
+        """Parse HTML from Urbana's website."""
         lines = html.split('\n')
         for i, line in enumerate(lines):
             if '<!-- ledgerId' in line:
 
-                listing = {'unit': line.split(' ')[-2]}
-                listings.append(listing)
+                unit = line.split(' ')[-2]
 
                 price_i = i + 7
-                listing['price'] = float(
+                price = float(
                     lines[price_i].split('>')[1].split('<')[0].replace('$', '').replace(',', '')
                 )
 
@@ -31,44 +30,48 @@ class UrbanaScraper(BaseScraper):
                     if '<img' in lines[floorplan_i]:
                         break
                     floorplan_i += 1
-                listing['floorplan'] = lines[floorplan_i].split('alt="')[1].split('"')[0]
+                floorplan = lines[floorplan_i].split('alt="')[1].split('"')[0]
 
                 if self.debug:
                     print('-' * 4)
-                    print('Unit found on line {0}: [{1}]'.format(i, line.strip()))
-                    print('\tunit: {0}'.format(listing['unit']))
+                    print('Unit found on line {0}: [{1}]'.format(
+                        i,
+                        line.strip(),
+                    ))
+                    print('\tunit: {0}'.format(unit))
                     print('Price found on line {0}: [{1}]'.format(
                         price_i,
                         lines[price_i].strip(),
                     ))
-                    print('\tprice: {0}'.format(listing['price']))
+                    print('\tprice: {0}'.format(price))
                     print('Floorplan found on line {0}: [{1}]'.format(
                         floorplan_i,
                         lines[floorplan_i].strip(),
                     ))
-                    print('\tfloorplan: {0}'.format(listing['floorplan']))
+                    print('\tfloorplan: {0}'.format(floorplan))
                     print('-' * 4)
 
-        return listings
+                yield unit, price, floorplan
 
-    def scrape_listings(self, dirpath=os.path.join(os.getcwd(), 'scrapes', 'urbana')):
+
+    def scrape_listings(self):
         """Scrape new listings from Urbana's website."""
-
-        if not os.path.exists(dirpath):
-            if self.verbose:
-                print('Creating directory at {0}...'.format(dirpath))
-            os.mkdir(dirpath)
 
         url = 'http://www.equityapartments.com/seattle/ballard/urbana-apartments'
         user_agent = fake_useragent.UserAgent().random
         if self.verbose:
-            print('Scraping {0} (as {1}) to {2}...'.format(url, user_agent, dirpath))
-        response, timestamp = self.scrape(url, headers={'User-Agent': user_agent}, path=dirpath)
+            print('Scraping {0} as {1}...'.format(url, user_agent))
+        response, timestamp = self.scrape(url, headers={'User-Agent': user_agent})
         assert response.status_code == 200
 
         if self.verbose:
             print('Parsing scraped HTML...')
-        listings = self.parse(html=response.text)
-        for listing in listings:
-            listing['timestamp'] = timestamp
+        listings = RentSurvey()
+        for unit, price, floorplan in self.parse(html=response.text):
+            listings.append({
+                'timestamp': timestamp,
+                'unit': unit,
+                'price': price,
+                'floorplan': floorplan,
+            })
         return listings

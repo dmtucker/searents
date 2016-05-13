@@ -67,18 +67,15 @@ def main(args=cli().parse_args()):
             print(survey)
         return
 
-    scrape_cache = os.path.join(os.path.dirname(args.file), 'searents_scrapes', 'urbana')
+    urbana = UrbanaScraper(
+        cache=os.path.join(os.path.dirname(args.file), 'scrapes', 'urbana'),
+        verbose=args.verbose,
+        debug=args.debug,
+    )
 
     if args.verbose:
         print('Getting new listings...')
-    new_listings = RentSurvey(
-        UrbanaScraper(
-            verbose=args.verbose,
-            debug=args.debug,
-        ).scrape_listings(
-            dirpath=scrape_cache,
-        )
-    )
+    new_listings = urbana.scrape_listings()
     if args.verbose:
         print('{0} new listings were found.'.format(len(new_listings)))
     print(new_listings)

@@ -11,14 +11,17 @@ class BaseScraper(object):  # pylint: disable=too-few-public-methods
 
     """Base Class for Searents Scrapers"""
 
-    def __init__(self, verbose=False, debug=False):
+    def __init__(self, cache=None, verbose=False, debug=False):
+        self.cache = cache
         self.verbose = verbose
         self.debug = debug
 
-    def scrape(self, url, headers=None, path=os.getcwd()):
+    def scrape(self, url, headers=None, path=None):
         """GET a remote resource and save it."""
         response = requests.get(url, headers=headers)
         timestamp = datetime.datetime.now()
+        if path is None:
+            path = self.cache
         if path is not None:
             if os.path.isdir(path):
                 extension = mimetypes.guess_extension(
@@ -34,6 +37,10 @@ class BaseScraper(object):  # pylint: disable=too-few-public-methods
                 )
             if self.verbose:
                 print('Saving scrape to {0}...'.format(path))
+            try:
+                os.mkdir(os.path.dirname(path))
+            except FileExistsError:
+                pass
             with open(path, 'w', encoding='utf-8') as f:
                 f.write(response.text)
         return response, timestamp
