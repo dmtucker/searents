@@ -9,7 +9,6 @@ https://github.com/pypa/sampleproject
 """
 
 from setuptools import setup, find_packages
-import searents
 
 with open('README.rst') as readme_file:
     README = readme_file.read()
@@ -19,8 +18,8 @@ with open('requirements.txt') as requirements_file:
 
 setup(
     name='searents',
-    version=searents.__version__,
-    description=searents.__doc__,
+    version='0.2.2',
+    description='A Scraper of Seattle Rents',
     long_description=README,
     author='David Tucker',
     author_email='david.michael.tucker@gmail.com',
