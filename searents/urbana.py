@@ -1,11 +1,12 @@
 """Library for Scraping Urbana Apartments"""
 
+import datetime
 import os
 
 import fake_useragent
 
-from .scraper import BaseScraper
-from .survey import RentSurvey
+from searents.scraper import BaseScraper
+from searents.survey import RentSurvey
 
 
 class UrbanaScraper(BaseScraper):
@@ -53,6 +54,24 @@ class UrbanaScraper(BaseScraper):
 
                 yield unit, price, floorplan
 
+    def cached_listings(self):
+        """Generate a RentSurvey from the scrape cache."""
+        listings = RentSurvey()
+        for filename in os.listdir(self.cache):
+            timestamp = datetime.datetime.strptime(
+                os.path.splitext(filename)[0],
+                self.datetime_format,
+            )
+            with open(os.path.join(self.cache, filename), 'r', encoding=self.encoding) as f:
+                html = f.read()
+            for unit, price, floorplan in self.parse(html=html):
+                listings.append({
+                    'timestamp': timestamp,
+                    'unit': unit,
+                    'price': price,
+                    'floorplan': floorplan,
+                })
+        return listings
 
     def scrape_listings(self):
         """Scrape new listings from Urbana's website."""

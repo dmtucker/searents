@@ -4,6 +4,7 @@
 
 import argparse
 import os
+import sys
 
 from .survey import RentSurvey
 from .urbana import UrbanaScraper
@@ -45,10 +46,16 @@ def cli(parser=argparse.ArgumentParser()):
         default=False,
         action="store_true"
     )
+    parser.add_argument(
+        "--verify",
+        help="Verify the survey against the scrape cache.",
+        default=False,
+        action="store_true"
+    )
     return parser
 
 
-def main(args=cli().parse_args()):
+def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
     """Execute CLI commands."""
 
     survey = None
@@ -70,7 +77,7 @@ def main(args=cli().parse_args()):
             survey.visualize()
         else:
             print(survey)
-        return
+        return 0
 
     urbana = UrbanaScraper(
         cache=os.path.join(args.cache, 'urbana'),
@@ -78,19 +85,27 @@ def main(args=cli().parse_args()):
         debug=args.debug,
     )
 
+    if args.verify:
+        if args.verbose:
+            print('Verifying the Urbana survey...')
+        if survey != urbana.cached_listings():
+            if args.verbose:
+                print('The survey is not consistent with the scrape cache.', file=sys.stderr)
+            return 1
+
     if args.verbose:
         print('Getting new listings...')
     new_listings = urbana.scrape_listings()
     if args.verbose:
         print('{0} new listings were found.'.format(len(new_listings)))
     print(new_listings)
+    survey += new_listings
 
     if args.verbose:
         print('Writing {0}...'.format(args.file))
-    survey += new_listings
     with open(args.file, 'w', encoding='utf-8') as f:
         f.write(survey.serialize())
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
