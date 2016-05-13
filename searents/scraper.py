@@ -11,6 +11,9 @@ class BaseScraper(object):  # pylint: disable=too-few-public-methods
 
     """Base Class for Searents Scrapers"""
 
+    encoding = 'utf-8'
+    datetime_format = '%Y-%m-%d_%H:%M:%S.%f'
+
     def __init__(self, cache=None, verbose=False, debug=False):
         self.cache = cache
         self.verbose = verbose
@@ -22,6 +25,8 @@ class BaseScraper(object):  # pylint: disable=too-few-public-methods
         timestamp = datetime.datetime.now()
         if path is None:
             path = self.cache
+            if not os.path.isdir(path):
+                os.mkdir(path)
         if path is not None:
             if os.path.isdir(path):
                 extension = mimetypes.guess_extension(
@@ -31,16 +36,12 @@ class BaseScraper(object):  # pylint: disable=too-few-public-methods
                 path = os.path.join(
                     path,
                     '{name}{extension}'.format(
-                        name=str(timestamp).replace(' ', '_'),
+                        name=timestamp.strftime(self.datetime_format),
                         extension='' if extension is None else extension,
                     ),
                 )
             if self.verbose:
                 print('Saving scrape to {0}...'.format(path))
-            try:
-                os.mkdir(os.path.dirname(path))
-            except FileExistsError:
-                pass
-            with open(path, 'w', encoding='utf-8') as f:
+            with open(path, 'w', encoding=self.encoding) as f:
                 f.write(response.text)
         return response, timestamp
