@@ -12,9 +12,14 @@ from .urbana import UrbanaScraper
 def cli(parser=argparse.ArgumentParser()):
     """ Specify and get command-line parameters. """
     parser.add_argument(
+        "-c", "--cache",
+        help="Specify the directory to cache scrapes in.",
+        default="scrapes",
+    )
+    parser.add_argument(
         "-f", "--file",
-        default="survey.json",
         help="Specify the file to read/write the survey from.",
+        default="survey.json",
     )
     parser.add_argument(
         "-g", "--graphical",
@@ -68,7 +73,7 @@ def main(args=cli().parse_args()):
         return
 
     urbana = UrbanaScraper(
-        cache=os.path.join(os.path.dirname(args.file), 'scrapes', 'urbana'),
+        cache=os.path.join(args.cache, 'urbana'),
         verbose=args.verbose,
         debug=args.debug,
     )
