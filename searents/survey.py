@@ -91,5 +91,5 @@ class RentSurvey(list):
         pyplot.grid(b=True, which='major', color='k', linestyle='-')
         pyplot.grid(b=True, which='minor', color='k', linestyle=':')
         pyplot.minorticks_on()
-        pyplot.legend(loc='upper left', fontsize='x-small')
+        pyplot.legend(loc='upper left', fontsize='xx-small')
         pyplot.show()
