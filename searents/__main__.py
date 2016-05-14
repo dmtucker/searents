@@ -75,13 +75,6 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-statements, too-m
         survey = RentSurvey()
     assert survey is not None
 
-    if args.read_only:
-        if args.graphical:
-            survey.visualize()
-        else:
-            print(survey)
-        return 0
-
     urbana = UrbanaScraper(cache_path=os.path.join(args.cache, 'urbana'), verbose=args.verbose)
 
     if args.verify:
@@ -96,6 +89,8 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-statements, too-m
         if args.verbose:
             print('Verifying the Urbana cache survey...')
         cached_listings.verify()
+        if args.verbose:
+            print('Comparing the survey to the cache...')
         if survey != cached_listings:
             if args.verbose:
                 print('The survey is not consistent with the scrape cache.')
@@ -115,6 +110,12 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-statements, too-m
                 return 1
         if args.verbose:
             print('The survey is consistent with the scrape cache.')
+
+    if args.read_only:
+        if args.graphical:
+            survey.visualize()
+        else:
+            print(survey)
         return 0
 
     if args.verbose:
