@@ -1,5 +1,6 @@
 """Structures for Tracking Listings"""
 
+import copy
 import datetime
 import json
 
@@ -38,10 +39,10 @@ class RentSurvey(list):
 
     def serialize(self):
         """Generate a string that can be used to recreate a Survey."""
-        serializable = list(self)
+        serializable = copy.deepcopy(self)
         for listing in serializable:
             listing['timestamp'] = listing['timestamp'].strftime(self.datetime_format)
-        return json.dumps(self, indent=4, sort_keys=True)
+        return json.dumps(serializable, indent=4, sort_keys=True)
 
     def __str__(self):
         return '\n'.join([
@@ -53,6 +54,14 @@ class RentSurvey(list):
             )
             for listing in self
         ])
+
+    def verify(self):
+        """Verify all contained litings are well-formed."""
+        for listing in self:
+            assert isinstance(listing['timestamp'], datetime.datetime)
+            assert isinstance(listing['unit'], str)
+            assert isinstance(listing['price'], float)
+            assert isinstance(listing['floorplan'], str)
 
     def visualize(self):
         """Plot a Survey."""

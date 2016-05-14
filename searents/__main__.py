@@ -24,7 +24,7 @@ def cli(parser=argparse.ArgumentParser()):
     )
     parser.add_argument(
         "-g", "--graphical",
-        help="Plot old listings (ignored without -r).",
+        help="Plot old listings (requires -r).",
         default=False,
         action="store_true"
     )
@@ -41,8 +41,8 @@ def cli(parser=argparse.ArgumentParser()):
         action="store_true"
     )
     parser.add_argument(
-        "--debug",
-        help="Print parsing details.",
+        "--regenerate",
+        help="Use the scrape cache to regenerate the survey (requires --verify).",
         default=False,
         action="store_true"
     )
@@ -55,7 +55,7 @@ def cli(parser=argparse.ArgumentParser()):
     return parser
 
 
-def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
+def main(args=cli().parse_args()):  # pylint: disable=too-many-statements, too-many-branches
     """Execute CLI commands."""
 
     survey = None
@@ -63,7 +63,10 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
         print('Reading {0}...'.format(args.file), end=' ')
     try:
         with open(args.file, 'r', encoding='utf-8') as f:
-            survey = RentSurvey.deserialize(f.read())
+            survey = RentSurvey(sorted(
+                RentSurvey.deserialize(f.read()),
+                key=lambda listing: listing['timestamp'],
+            ))
         if args.verbose:
             print('{0} listings'.format(len(survey)))
     except FileNotFoundError:
@@ -79,19 +82,40 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
             print(survey)
         return 0
 
-    urbana = UrbanaScraper(
-        cache=os.path.join(args.cache, 'urbana'),
-        verbose=args.verbose,
-        debug=args.debug,
-    )
+    urbana = UrbanaScraper(cache=os.path.join(args.cache, 'urbana'), verbose=args.verbose)
 
     if args.verify:
         if args.verbose:
             print('Verifying the Urbana survey...')
-        if survey != urbana.cached_listings():
+        survey.verify()
+        if args.verbose:
+            print('Generating the Urbana cache survey...')
+        cached_listings = RentSurvey(
+            sorted(urbana.cached_listings(), key=lambda listing: listing['timestamp'])
+        )
+        if args.verbose:
+            print('Verifying the Urbana cache survey...')
+        cached_listings.verify()
+        if survey != cached_listings:
             if args.verbose:
-                print('The survey is not consistent with the scrape cache.', file=sys.stderr)
-            return 1
+                print('The survey is not consistent with the scrape cache.')
+                if len(cached_listings) != len(survey):
+                    print(
+                        'The survey is {0}.'.format(
+                            'shorter' if len(survey) < len(cached_listings) else 'longer',
+                        ),
+                    )
+            if args.regenerate:
+                if args.verbose:
+                    print('Overwriting the survey...')
+                with open(args.file, 'w') as f:
+                    f.write(cached_listings.serialize())
+                survey = cached_listings
+            else:
+                return 1
+        if args.verbose:
+            print('The survey is consistent with the scrape cache.')
+        return 0
 
     if args.verbose:
         print('Getting new listings...')

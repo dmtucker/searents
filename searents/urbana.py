@@ -13,7 +13,8 @@ class UrbanaScraper(BaseScraper):
 
     """Web Scraper for Urbana Apartments"""
 
-    def parse(self, html):
+    @classmethod
+    def parse(cls, html, debug=False):
         """Parse HTML from Urbana's website."""
         lines = html.split('\n')
         for i, line in enumerate(lines):
@@ -33,7 +34,7 @@ class UrbanaScraper(BaseScraper):
                     floorplan_i += 1
                 floorplan = lines[floorplan_i].split('alt="')[1].split('"')[0]
 
-                if self.debug:
+                if debug:
                     print('-' * 4)
                     print('Unit found on line {0}: [{1}]'.format(
                         i,
@@ -57,13 +58,15 @@ class UrbanaScraper(BaseScraper):
     def cached_listings(self):
         """Generate a RentSurvey from the scrape cache."""
         listings = RentSurvey()
-        for filename in os.listdir(self.cache):
+        for filename in sorted(os.listdir(self.cache)):
             timestamp = datetime.datetime.strptime(
                 os.path.splitext(filename)[0],
                 self.datetime_format,
             )
-            with open(os.path.join(self.cache, filename), 'r', encoding=self.encoding) as f:
+            path = os.path.join(self.cache, filename)
+            with open(path, 'r', encoding=self.encoding) as f:
                 html = f.read()
+            before = len(listings)
             for unit, price, floorplan in self.parse(html=html):
                 listings.append({
                     'timestamp': timestamp,
@@ -71,6 +74,8 @@ class UrbanaScraper(BaseScraper):
                     'price': price,
                     'floorplan': floorplan,
                 })
+            if self.verbose and not len(listings) > before:
+                print('{0} is empty.'.format(path))
         return listings
 
     def scrape_listings(self):
@@ -86,7 +91,7 @@ class UrbanaScraper(BaseScraper):
         if self.verbose:
             print('Parsing scraped HTML...')
         listings = RentSurvey()
-        for unit, price, floorplan in self.parse(html=response.text):
+        for unit, price, floorplan in UrbanaScraper.parse(html=response.text):
             listings.append({
                 'timestamp': timestamp,
                 'unit': unit,

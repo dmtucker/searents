@@ -14,10 +14,9 @@ class BaseScraper(object):  # pylint: disable=too-few-public-methods
     encoding = 'utf-8'
     datetime_format = '%Y-%m-%d_%H:%M:%S.%f'
 
-    def __init__(self, cache=None, verbose=False, debug=False):
+    def __init__(self, cache=None, verbose=False):
         self.cache = cache
         self.verbose = verbose
-        self.debug = debug
 
     def scrape(self, url, headers=None, path=None):
         """GET a remote resource and save it."""
