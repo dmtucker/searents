@@ -58,12 +58,12 @@ class UrbanaScraper(BaseScraper):
     def cached_listings(self):
         """Generate a RentSurvey from the scrape cache."""
         listings = RentSurvey()
-        for filename in sorted(os.listdir(self.cache)):
+        for filename in sorted(os.listdir(self.cache_path)):
             timestamp = datetime.datetime.strptime(
                 os.path.splitext(filename)[0],
                 self.datetime_format,
             )
-            path = os.path.join(self.cache, filename)
+            path = os.path.join(self.cache_path, filename)
             with open(path, 'r', encoding=self.encoding) as f:
                 html = f.read()
             before = len(listings)

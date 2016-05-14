@@ -82,7 +82,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-statements, too-m
             print(survey)
         return 0
 
-    urbana = UrbanaScraper(cache=os.path.join(args.cache, 'urbana'), verbose=args.verbose)
+    urbana = UrbanaScraper(cache_path=os.path.join(args.cache, 'urbana'), verbose=args.verbose)
 
     if args.verify:
         if args.verbose:
