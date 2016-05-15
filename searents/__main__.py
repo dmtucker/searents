@@ -92,8 +92,6 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
 
     for name, scraper in scrapers.items():
 
-        if not args.graphical:
-            print(name)
         survey_path = '{0}.json'.format(scraper.cache_path)
         logging.info('Reading the survey at %s...', survey_path)
         try:
@@ -105,7 +103,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
             surveys[name] = RentSurvey()
 
         if not args.no_fetch:
-            logging.debug('Fetching new listings...')
+            logging.debug('Fetching new listings from %s...', name)
             survey = scraper.scrape_listings()
             before = len(surveys[name])
             surveys[name].extend(survey)
