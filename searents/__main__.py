@@ -19,12 +19,6 @@ def cli(parser=argparse.ArgumentParser()):
         default='searents_scrapes',
     )
     parser.add_argument(
-        '--cached',
-        help='Show cached listings.',
-        default=False,
-        action='store_true',
-    )
-    parser.add_argument(
         '--graphical',
         help='Plot listings (requires --show).',
         default=False,
@@ -51,6 +45,12 @@ def cli(parser=argparse.ArgumentParser()):
         '--log-level',
         help='Specify a log-level (DEBUG, INFO, WARNING, ERROR, CRITICAL).',
         default='INFO',
+    )
+    parser.add_argument(
+        '--show-all',
+        help='Show all listings.',
+        default=False,
+        action='store_true',
     )
     parser.add_argument(
         '--verify',
@@ -99,7 +99,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
             before = len(surveys[name])
             surveys[name].extend(survey)
             logging.info('%d new listings were fetched.', len(surveys[name]) - before)
-            if not args.cached:
+            if not args.show_all:
                 if args.graphical:
                     survey.visualize(name)
                 else:
@@ -121,7 +121,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
                     return 1
             logging.info('The survey is consistent with the cache.')
 
-    if args.cached:
+    if args.show_all:
 
         logging.debug('Combining and sorting all surveys...')
         survey = RentSurvey(sorted(
