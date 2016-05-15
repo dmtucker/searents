@@ -64,7 +64,7 @@ def cli(parser=argparse.ArgumentParser()):
     return parser
 
 
-def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
+def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-many-statements
     """Execute CLI commands."""
 
     log_level = getattr(logging, args.log_level.upper(), None)
