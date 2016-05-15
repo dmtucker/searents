@@ -130,7 +130,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
         ))
 
         if args.graphical:
-            survey.visualize()
+            survey.visualize(name)
         else:
             print(survey)
         return 0
