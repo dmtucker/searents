@@ -112,7 +112,10 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
             surveys[name].extend(survey)
             logging.info('%d new listings were fetched.', len(surveys[name]) - before)
             if not args.show_all:
-                print(survey)
+                if args.graphical:
+                    survey.visualize(' '.join([name, str(survey[0]['timestamp'])]))
+                else:
+                    print(survey)
             logging.info('Writing the new listings to %s...', survey_path)
             surveys[name].save(survey_path)
 
