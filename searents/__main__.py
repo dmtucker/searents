@@ -3,6 +3,7 @@
 """Web Scraper for Urbana Apartments"""
 
 import argparse
+import logging
 import os
 import sys
 
@@ -21,99 +22,107 @@ def cli(parser=argparse.ArgumentParser()):
         '--cached',
         help='Show cached listings.',
         default=False,
-        action='store_true'
+        action='store_true',
     )
     parser.add_argument(
         '--graphical',
         help='Plot listings (requires --show).',
         default=False,
-        action='store_true'
+        action='store_true',
     )
     parser.add_argument(
         '--no-fetch',
         help='Do not fetch new listings.',
         default=False,
-        action='store_true'
+        action='store_true',
     )
     parser.add_argument(
         '--regenerate',
         help='Use the scrape cache to regenerate the survey (requires --verify).',
         default=False,
-        action='store_true'
+        action='store_true',
     )
     parser.add_argument(
-        '--verbose', '-v',
-        help='Print progress details.',
-        default=False,
-        action='store_true'
+        '--log-file',
+        help='Specify the directory to store scrape caches in.',
+        default=os.path.join('/var', 'log', 'searents.log'),
+    )
+    parser.add_argument(
+        '--log-level',
+        help='Specify a log-level (DEBUG, INFO, WARNING, ERROR, CRITICAL).',
+        default='INFO',
     )
     parser.add_argument(
         '--verify',
         help='Verify the survey against the scrape cache.',
         default=False,
-        action='store_true'
+        action='store_true',
     )
     return parser
 
 
-def main(args=cli().parse_args()):
+def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
     """Execute CLI commands."""
 
-    _print = print if args.verbose else lambda *args, **kwargs: None
+    log_level = getattr(logging, args.log_level.upper(), None)
+    if not isinstance(log_level, int):
+        raise ValueError('Invalid log level: %s' % args.log_level)
+    logging.basicConfig(
+        filename=args.log_file,
+        level=log_level,
+        format='%(asctime)s [%(levelname)s] %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+    )
 
     scrapers = {
-        'Urbana': UrbanaScraper(
-            cache_path=os.path.join(args.cache, 'urbana'),
-            verbose=args.verbose,
-        ),
+        'Urbana': UrbanaScraper(cache_path=os.path.join(args.cache, 'urbana')),
     }
     surveys = {}
 
     for name, scraper in scrapers.items():
 
-        _print(name)
+        print(name)
         survey_path = os.path.join(args.cache, '{0}.json'.format(name))
-        _print('* Reading the survey at {0}...'.format(survey_path), end=' ')
+        logging.info('Reading the survey at %s...', survey_path)
         try:
             surveys[name] = RentSurvey.load(survey_path)
-            _print('{0} listings'.format(len(surveys[name])))
+            logging.debug('%d listings', len(surveys[name]))
         except FileNotFoundError:
-            _print('not found')
+            logging.debug('%s not found', survey_path)
             open(survey_path, 'a').close()
             surveys[name] = RentSurvey()
 
         if not args.no_fetch:
-            _print('* Getting new listings...')
+            logging.debug('Fetching new listings...')
             survey = scraper.scrape_listings()
             before = len(surveys[name])
             surveys[name].extend(survey)
-            _print('* {0} new listings were found.'.format(len(surveys[name]) - before))
+            logging.info('%d new listings were fetched.', len(surveys[name]) - before)
             if not args.cached:
                 if args.graphical:
                     survey.visualize()
                 else:
                     print(survey)
-            _print('* Writing the new listings to {0}...'.format(survey_path))
+            logging.info('Writing the new listings to %s...', survey_path)
             surveys[name].save(survey_path)
 
         if args.verify:
-            _print('* Generating a survey from the cache at {0}...'.format(scraper.cache_path))
+            logging.debug('Generating a survey from the cache at %s...', scraper.cache_path)
             cached_survey = scraper.cached_listings()
-            _print('* Verifying the generated survey with the survey at {0}...'.format(survey_path))
+            logging.info('Verifying the generated survey with the survey at %s...', survey_path)
             if surveys[name] != cached_survey:
-                _print('* The survey is not consistent with the cache.')
+                logging.info('The survey is not consistent with the cache.')
                 if args.regenerate:
-                    if args.verbose:
-                        print('* Overwriting the survey at {0}...'.format(survey_path))
+                    logging.info('Overwriting the survey at %s...', survey_path)
                     cached_survey.save(survey_path)
                     surveys[name] = cached_survey
                 else:
                     return 1
-            _print('* The survey is consistent with the cache.')
+            logging.info('The survey is consistent with the cache.')
 
     if args.cached:
 
-        _print('* Combining and sorting all surveys...')
+        logging.debug('Combining and sorting all surveys...')
         survey = RentSurvey(sorted(
             [listing for survey in surveys.values() for listing in survey],
             key=lambda listing: listing['timestamp'],

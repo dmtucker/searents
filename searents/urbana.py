@@ -1,6 +1,7 @@
 """Library for Scraping Urbana Apartments"""
 
 import datetime
+import logging
 import os
 
 import fake_useragent
@@ -14,17 +15,24 @@ class UrbanaScraper(BaseScraper):
     """Web Scraper for Urbana Apartments"""
 
     @classmethod
-    def parse(cls, html, debug=False):
+    def parse(cls, html):
         """Parse HTML from Urbana's website."""
         lines = html.split('\n')
         for i, line in enumerate(lines):
             if '<!-- ledgerId' in line:
 
                 unit = line.split(' ')[-2]
+                logging.debug('Unit (%s) found on line %d: %s', unit, i, line.strip())
 
                 price_i = i + 7
                 price = float(
                     lines[price_i].split('>')[1].split('<')[0].replace('$', '').replace(',', '')
+                )
+                logging.debug(
+                    'Price (%f) found on line %d: [%s]',
+                    price,
+                    price_i,
+                    lines[price_i].strip(),
                 )
 
                 floorplan_i = i + 1
@@ -33,25 +41,12 @@ class UrbanaScraper(BaseScraper):
                         break
                     floorplan_i += 1
                 floorplan = lines[floorplan_i].split('alt="')[1].split('"')[0]
-
-                if debug:
-                    print('-' * 4)
-                    print('Unit found on line {0}: [{1}]'.format(
-                        i,
-                        line.strip(),
-                    ))
-                    print('\tunit: {0}'.format(unit))
-                    print('Price found on line {0}: [{1}]'.format(
-                        price_i,
-                        lines[price_i].strip(),
-                    ))
-                    print('\tprice: {0}'.format(price))
-                    print('Floorplan found on line {0}: [{1}]'.format(
-                        floorplan_i,
-                        lines[floorplan_i].strip(),
-                    ))
-                    print('\tfloorplan: {0}'.format(floorplan))
-                    print('-' * 4)
+                logging.debug(
+                    'Floorplan (%s) found on line %d: [%s]',
+                    floorplan,
+                    floorplan_i,
+                    lines[floorplan_i].strip(),
+                )
 
                 yield unit, price, floorplan
 
@@ -69,6 +64,7 @@ class UrbanaScraper(BaseScraper):
                 with open(path, 'r', encoding=self.encoding) as f:
                     html = f.read()
                 before = len(survey)
+                logging.debug('Parsing %s...', path)
                 for unit, price, floorplan in UrbanaScraper.parse(html=html):
                     survey.append({
                         'timestamp': timestamp,
@@ -76,8 +72,8 @@ class UrbanaScraper(BaseScraper):
                         'price': price,
                         'floorplan': floorplan,
                     })
-                if self.verbose and not len(survey) > before:
-                    print('* {0} is empty.'.format(path))
+                if not len(survey) > before:
+                    logging.warning('%s is empty.', path)
             survey = RentSurvey(sorted(survey, key=lambda listing: listing['timestamp']))
             assert survey.is_valid()
         return survey
@@ -91,6 +87,7 @@ class UrbanaScraper(BaseScraper):
         assert response.status_code == 200
 
         survey = RentSurvey()
+        logging.debug('Parsing data scraped from %s...', url)
         for unit, price, floorplan in UrbanaScraper.parse(html=response.text):
             survey.append({
                 'timestamp': timestamp,

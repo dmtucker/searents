@@ -1,6 +1,7 @@
 """General-Purpose Web Scraper"""
 
 import datetime
+import logging
 import mimetypes
 import os
 
@@ -14,9 +15,8 @@ class BaseScraper(object):
     encoding = 'utf-8'
     datetime_format = '%Y-%m-%d_%H:%M:%S.%f'
 
-    def __init__(self, cache_path=None, verbose=False):
+    def __init__(self, cache_path=None):
         self.cache_path = cache_path
-        self.verbose = verbose
 
     @property
     def cache_path(self):
@@ -35,6 +35,7 @@ class BaseScraper(object):
 
     def scrape(self, url, headers=None, path=None):
         """GET a remote resource and save it."""
+        logging.info('Scraping %s...', url)
         response = requests.get(url, headers=headers)
         timestamp = datetime.datetime.now()
         if path is None:
@@ -52,8 +53,7 @@ class BaseScraper(object):
                         extension='' if extension is None else extension,
                     ),
                 )
-            if self.verbose:
-                print('* Saving scrape to {0}...'.format(path))
+            logging.info('Saving scraped data to %s...', path)
             with open(path, 'w', encoding=self.encoding) as f:
                 f.write(response.text)
         return response, timestamp
