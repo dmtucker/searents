@@ -75,7 +75,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
     )
 
     scrapers = {
-        'Urbana': UrbanaScraper(cache_path=os.path.join(args.cache, 'urbana')),
+        'Urbana': UrbanaScraper(cache_path=os.path.join(args.cache, 'Urbana')),
     }
     surveys = {}
 
