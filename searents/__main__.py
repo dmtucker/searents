@@ -75,6 +75,14 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
     )
 
     scrapers = {
+        'Harbor Steps': EquityScraper(
+            url='http://www.equityapartments.com/seattle/downtown-seattle/harbor-steps-apartments',
+            cache_path=os.path.join(args.cache, 'Harbor_Steps'),
+        ),
+        'Odin': EquityScraper(
+            url='http://www.equityapartments.com/seattle/ballard/odin-apartments',
+            cache_path=os.path.join(args.cache, 'Odin'),
+        ),
         'Urbana': EquityScraper(
             url='http://www.equityapartments.com/seattle/ballard/urbana-apartments',
             cache_path=os.path.join(args.cache, 'Urbana'),
