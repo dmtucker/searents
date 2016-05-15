@@ -109,10 +109,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
             surveys[name].extend(survey)
             logging.info('%d new listings were fetched.', len(surveys[name]) - before)
             if not args.show_all:
-                if args.graphical:
-                    survey.visualize(name)
-                else:
-                    print(survey)
+                print(survey)
             logging.info('Writing the new listings to %s...', survey_path)
             surveys[name].save(survey_path)
 
@@ -129,6 +126,13 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
                 else:
                     return 1
             logging.info('The survey is consistent with the cache.')
+
+        if args.show_all:
+            logging.debug('Showing the %s survey...', name)
+            if args.graphical:
+                survey[name].visualize(name)
+            else:
+                print(survey[name])
 
     if args.show_all:
 
