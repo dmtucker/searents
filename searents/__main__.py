@@ -93,7 +93,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
     for name, scraper in scrapers.items():
 
         survey_path = '{0}.json'.format(scraper.cache_path)
-        logging.info('Reading the survey at %s...', survey_path)
+        logging.debug('Reading the survey at %s...', survey_path)
         try:
             surveys[name] = RentSurvey.load(survey_path)
             logging.debug('%d listings', len(surveys[name]))
