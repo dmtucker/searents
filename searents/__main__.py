@@ -112,7 +112,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
             cached_survey = scraper.cached_listings()
             logging.info('Verifying the generated survey with the survey at %s...', survey_path)
             if surveys[name] != cached_survey:
-                logging.info('The survey is not consistent with the cache.')
+                logging.warning('The survey is not consistent with the cache.')
                 if args.regenerate:
                     logging.info('Overwriting the survey at %s...', survey_path)
                     cached_survey.save(survey_path)
