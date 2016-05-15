@@ -24,11 +24,12 @@ class RentSurvey(list):
     }
     """
 
+    encoding = 'utf-8'
     datetime_format = '%Y-%m-%d %H:%M:%S.%f'
 
     @classmethod
     def deserialize(cls, serialized):
-        """Recreate a serialized Survey."""
+        """Recreate a serialized RentSurvey."""
         listings = json.loads(serialized)
         for listing in listings:
             listing['timestamp'] = datetime.datetime.strptime(
@@ -38,11 +39,22 @@ class RentSurvey(list):
         return cls(listings)
 
     def serialize(self):
-        """Generate a string that can be used to recreate a Survey."""
+        """Generate a string that can be used to recreate a RentSurvey."""
         serializable = copy.deepcopy(self)
         for listing in serializable:
             listing['timestamp'] = listing['timestamp'].strftime(self.datetime_format)
         return json.dumps(serializable, indent=4, sort_keys=True)
+
+    @classmethod
+    def load(cls, path):
+        """Read a serialized RentSurvey from a file."""
+        with open(path, 'r', encoding=cls.encoding) as f:
+            return cls.deserialize(serialized=f.read())
+
+    def save(self, path):
+        """Write a serialized RentSurvey to a file."""
+        with open(path, 'w', encoding=self.encoding) as f:
+            return f.write(self.serialize())
 
     def __str__(self):
         return '\n'.join([
@@ -55,16 +67,21 @@ class RentSurvey(list):
             for listing in self
         ])
 
-    def verify(self):
-        """Verify all contained litings are well-formed."""
+    def is_valid(self):
+        """Verify all contained listings are well-formed."""
         for listing in self:
-            assert isinstance(listing['timestamp'], datetime.datetime)
-            assert isinstance(listing['unit'], str)
-            assert isinstance(listing['price'], float)
-            assert isinstance(listing['floorplan'], str)
+            if not isinstance(listing['timestamp'], datetime.datetime):
+                return False
+            if not isinstance(listing['unit'], str):
+                return False
+            if not isinstance(listing['price'], float):
+                return False
+            if not isinstance(listing['floorplan'], str):
+                return False
+        return True
 
     def visualize(self):
-        """Plot a Survey."""
+        """Plot listings."""
         units = set([listing['unit'] for listing in self])
         color = iter(cm.rainbow(numpy.linspace(0, 1, len(units))))  # pylint: disable=no-member
         for unit in sorted(units):

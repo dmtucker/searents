@@ -25,8 +25,8 @@ class BaseScraper(object):
 
     @cache_path.setter
     def cache_path(self, path):
-        path = os.path.realpath(path)
         if path is not None:
+            path = os.path.realpath(path)
             if not os.path.exists(path):
                 os.makedirs(path)
             if not os.path.isdir(path):
@@ -53,7 +53,7 @@ class BaseScraper(object):
                     ),
                 )
             if self.verbose:
-                print('Saving scrape to {0}...'.format(path))
+                print('* Saving scrape to {0}...'.format(path))
             with open(path, 'w', encoding=self.encoding) as f:
                 f.write(response.text)
         return response, timestamp

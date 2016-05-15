@@ -13,123 +13,117 @@ from .urbana import UrbanaScraper
 def cli(parser=argparse.ArgumentParser()):
     """ Specify and get command-line parameters. """
     parser.add_argument(
-        "-c", "--cache",
-        help="Specify the directory to cache scrapes in.",
-        default="scrapes",
+        '--cache', '-c',
+        help='Specify the directory to store scrape caches in.',
+        default='searents_scrapes',
     )
     parser.add_argument(
-        "-f", "--file",
-        help="Specify the file to read/write the survey from.",
-        default="survey.json",
-    )
-    parser.add_argument(
-        "-g", "--graphical",
-        help="Plot old listings (requires -r).",
+        '--cached',
+        help='Show cached listings.',
         default=False,
-        action="store_true"
+        action='store_true'
     )
     parser.add_argument(
-        "-r", "--read-only",
-        help="Get and show old listings only.",
+        '--graphical',
+        help='Plot listings (requires --show).',
         default=False,
-        action="store_true"
+        action='store_true'
     )
     parser.add_argument(
-        "-v", "--verbose",
-        help="Print progress details.",
+        '--no-fetch',
+        help='Do not fetch new listings.',
         default=False,
-        action="store_true"
+        action='store_true'
     )
     parser.add_argument(
-        "--regenerate",
-        help="Use the scrape cache to regenerate the survey (requires --verify).",
+        '--regenerate',
+        help='Use the scrape cache to regenerate the survey (requires --verify).',
         default=False,
-        action="store_true"
+        action='store_true'
     )
     parser.add_argument(
-        "--verify",
-        help="Verify the survey against the scrape cache.",
+        '--verbose', '-v',
+        help='Print progress details.',
         default=False,
-        action="store_true"
+        action='store_true'
+    )
+    parser.add_argument(
+        '--verify',
+        help='Verify the survey against the scrape cache.',
+        default=False,
+        action='store_true'
     )
     return parser
 
 
-def main(args=cli().parse_args()):  # pylint: disable=too-many-statements, too-many-branches
+def main(args=cli().parse_args()):
     """Execute CLI commands."""
 
-    survey = None
-    if args.verbose:
-        print('Reading {0}...'.format(args.file), end=' ')
-    try:
-        with open(args.file, 'r', encoding='utf-8') as f:
-            survey = RentSurvey(sorted(
-                RentSurvey.deserialize(f.read()),
-                key=lambda listing: listing['timestamp'],
-            ))
-        if args.verbose:
-            print('{0} listings'.format(len(survey)))
-    except FileNotFoundError:
-        if args.verbose:
-            print('not found')
-        survey = RentSurvey()
-    assert survey is not None
+    _print = print if args.verbose else lambda *args, **kwargs: None
 
-    urbana = UrbanaScraper(cache_path=os.path.join(args.cache, 'urbana'), verbose=args.verbose)
+    scrapers = {
+        'Urbana': UrbanaScraper(
+            cache_path=os.path.join(args.cache, 'urbana'),
+            verbose=args.verbose,
+        ),
+    }
+    surveys = {}
 
-    if args.verify:
-        if args.verbose:
-            print('Verifying the Urbana survey...')
-        survey.verify()
-        if args.verbose:
-            print('Generating the Urbana cache survey...')
-        cached_listings = RentSurvey(
-            sorted(urbana.cached_listings(), key=lambda listing: listing['timestamp'])
-        )
-        if args.verbose:
-            print('Verifying the Urbana cache survey...')
-        cached_listings.verify()
-        if args.verbose:
-            print('Comparing the survey to the cache...')
-        if survey != cached_listings:
-            if args.verbose:
-                print('The survey is not consistent with the scrape cache.')
-                if len(cached_listings) != len(survey):
-                    print(
-                        'The survey is {0}.'.format(
-                            'shorter' if len(survey) < len(cached_listings) else 'longer',
-                        ),
-                    )
-            if args.regenerate:
-                if args.verbose:
-                    print('Overwriting the survey...')
-                with open(args.file, 'w') as f:
-                    f.write(cached_listings.serialize())
-                survey = cached_listings
-            else:
-                return 1
-        if args.verbose:
-            print('The survey is consistent with the scrape cache.')
+    for name, scraper in scrapers.items():
 
-    if args.read_only:
+        _print(name)
+        survey_path = os.path.join(args.cache, '{0}.json'.format(name))
+        _print('* Reading the survey at {0}...'.format(survey_path), end=' ')
+        try:
+            surveys[name] = RentSurvey.load(survey_path)
+            _print('{0} listings'.format(len(surveys[name])))
+        except FileNotFoundError:
+            _print('not found')
+            open(survey_path, 'a').close()
+            surveys[name] = RentSurvey()
+
+        if not args.no_fetch:
+            _print('* Getting new listings...')
+            survey = scraper.scrape_listings()
+            before = len(surveys[name])
+            surveys[name].extend(survey)
+            _print('* {0} new listings were found.'.format(len(surveys[name]) - before))
+            if not args.cached:
+                if args.graphical:
+                    survey.visualize()
+                else:
+                    print(survey)
+            _print('* Writing the new listings to {0}...'.format(survey_path))
+            surveys[name].save(survey_path)
+
+        if args.verify:
+            _print('* Generating a survey from the cache at {0}...'.format(scraper.cache_path))
+            cached_survey = scraper.cached_listings()
+            _print('* Verifying the generated survey with the survey at {0}...'.format(survey_path))
+            if surveys[name] != cached_survey:
+                _print('* The survey is not consistent with the cache.')
+                if args.regenerate:
+                    if args.verbose:
+                        print('* Overwriting the survey at {0}...'.format(survey_path))
+                    cached_survey.save(survey_path)
+                    surveys[name] = cached_survey
+                else:
+                    return 1
+            _print('* The survey is consistent with the cache.')
+
+    if args.cached:
+
+        _print('* Combining and sorting all surveys...')
+        survey = RentSurvey(sorted(
+            [listing for survey in surveys.values() for listing in survey],
+            key=lambda listing: listing['timestamp'],
+        ))
+
         if args.graphical:
             survey.visualize()
         else:
             print(survey)
         return 0
-
-    if args.verbose:
-        print('Getting new listings...')
-    new_listings = urbana.scrape_listings()
-    if args.verbose:
-        print('{0} new listings were found.'.format(len(new_listings)))
-    print(new_listings)
-    survey += new_listings
-
-    if args.verbose:
-        print('Writing {0}...'.format(args.file))
-    with open(args.file, 'w', encoding='utf-8') as f:
-        f.write(survey.serialize())
 
 
 if __name__ == '__main__':
