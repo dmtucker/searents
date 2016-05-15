@@ -81,7 +81,8 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
 
     for name, scraper in scrapers.items():
 
-        print(name)
+        if not args.graphical:
+            print(name)
         survey_path = os.path.join(args.cache, '{0}.json'.format(name))
         logging.info('Reading the survey at %s...', survey_path)
         try:
@@ -100,7 +101,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
             logging.info('%d new listings were fetched.', len(surveys[name]) - before)
             if not args.cached:
                 if args.graphical:
-                    survey.visualize()
+                    survey.visualize(name)
                 else:
                     print(survey)
             logging.info('Writing the new listings to %s...', survey_path)

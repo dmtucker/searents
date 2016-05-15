@@ -80,7 +80,7 @@ class RentSurvey(list):
                 return False
         return True
 
-    def visualize(self):
+    def visualize(self, name=None):
         """Plot listings."""
         units = set([listing['unit'] for listing in self])
         color = iter(cm.rainbow(numpy.linspace(0, 1, len(units))))  # pylint: disable=no-member
@@ -102,6 +102,8 @@ class RentSurvey(list):
                 unit_listings[-1]['price'],
                 'unit {0} ({1})'.format(unit, unit_listings[-1]['price']),
             )
+        if name is not None:
+            pyplot.gcf().canvas.set_window_title(name)
         pyplot.title('Apartment Prices Over Time')
         pyplot.xlabel('Time')
         pyplot.ylabel('Price')
