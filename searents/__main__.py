@@ -7,8 +7,8 @@ import logging
 import os
 import sys
 
-from .survey import RentSurvey
-from .equity import EquityScraper
+from searents.survey import RentSurvey
+from searents.equity import EquityScraper
 
 
 def cli(parser=argparse.ArgumentParser()):

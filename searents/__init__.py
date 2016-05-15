@@ -1,4 +1,4 @@
 """A Scraper of Seattle Rents"""
 
-from .survey import RentSurvey
-from .equity import EquityScraper
+from searents.survey import RentSurvey
+from searents.equity import EquityScraper
