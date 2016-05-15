@@ -86,7 +86,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
 
         if not args.graphical:
             print(name)
-        survey_path = os.path.join(args.cache, '{0}.json'.format(name))
+        survey_path = '{0}.json'.format(scraper.cache_path)
         logging.info('Reading the survey at %s...', survey_path)
         try:
             surveys[name] = RentSurvey.load(survey_path)
