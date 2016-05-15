@@ -25,8 +25,8 @@ def cli(parser=argparse.ArgumentParser()):
         action='store_true',
     )
     parser.add_argument(
-        '--no-fetch',
-        help='Do not fetch new listings.',
+        '--fetch',
+        help='Fetch new listings.',
         default=False,
         action='store_true',
     )
@@ -102,7 +102,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
             open(survey_path, 'a').close()
             surveys[name] = RentSurvey()
 
-        if not args.no_fetch:
+        if args.fetch:
             logging.debug('Fetching new listings from %s...', name)
             survey = scraper.scrape_listings()
             before = len(surveys[name])
