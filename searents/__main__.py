@@ -20,7 +20,7 @@ def cli(parser=argparse.ArgumentParser()):
     )
     parser.add_argument(
         '--graphical',
-        help='Plot listings (requires --show).',
+        help='Plot listings.',
         default=False,
         action='store_true',
     )
