@@ -18,7 +18,7 @@ with open('requirements.txt') as requirements_file:
 
 setup(
     name='searents',
-    version='0.5.0',
+    version='0.5.1',
     description='A Scraper of Seattle Rents',
     long_description=README,
     author='David Tucker',
