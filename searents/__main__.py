@@ -67,6 +67,8 @@ def cli(parser=argparse.ArgumentParser()):
 def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-many-statements
     """Execute CLI commands."""
 
+    exit_status = 0
+
     log_level = getattr(logging, args.log_level.upper(), None)
     if not isinstance(log_level, int):
         raise ValueError('Invalid log level: %s' % args.log_level)
@@ -130,8 +132,9 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
                     cached_survey.save(survey_path)
                     surveys[name] = cached_survey
                 else:
-                    return 1
-            logging.info('The %s survey is consistent with its cache.', name)
+                    exit_status += 1
+            if surveys[name] == cached_survey:
+                logging.info('The %s survey is consistent with its cache.', name)
 
         if args.show_all:
             logging.debug('Showing the %s survey...', name)
@@ -153,7 +156,8 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
             survey.visualize('All Listings')
         else:
             print(survey)
-        return 0
+
+    return exit_status
 
 
 if __name__ == '__main__':
