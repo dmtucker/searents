@@ -71,6 +71,7 @@ class EquityScraper(BaseScraper):
                         'unit': unit,
                         'price': price,
                         'floorplan': floorplan,
+                        'url': self.url,
                     })
                 if not len(survey) > before:
                     logging.warning('%s is empty.', path)
@@ -93,6 +94,7 @@ class EquityScraper(BaseScraper):
                 'unit': unit,
                 'price': price,
                 'floorplan': floorplan,
+                'url': self.url,
             })
         assert survey.is_valid()
         return survey

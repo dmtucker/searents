@@ -21,6 +21,7 @@ class RentSurvey(list):
         'unit': str,
         'price': float,
         'floorplan': str,
+        'url': str,
     }
     """
 
@@ -58,11 +59,12 @@ class RentSurvey(list):
 
     def __str__(self):
         return '\n'.join([
-            'timestamp: {0}, unit: {1}, price: {2}, floorplan: {3}'.format(
+            'timestamp: {0}, unit: {1}, price: {2}, floorplan: {3}, url: {4}'.format(
                 listing['timestamp'],
                 listing['unit'],
                 listing['price'],
                 listing['floorplan'],
+                listing['url']
             )
             for listing in self
         ])
@@ -77,6 +79,8 @@ class RentSurvey(list):
             if not isinstance(listing['price'], float):
                 return False
             if not isinstance(listing['floorplan'], str):
+                return False
+            if not isinstance(listing['url'], str):
                 return False
         return True
 
