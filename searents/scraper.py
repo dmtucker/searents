@@ -15,7 +15,8 @@ class BaseScraper(object):
     encoding = 'utf-8'
     datetime_format = '%Y-%m-%d_%H:%M:%S.%f'
 
-    def __init__(self, cache_path=None):
+    def __init__(self, url, cache_path=None):
+        self.url = url
         self.cache_path = cache_path
 
     @property
@@ -33,10 +34,10 @@ class BaseScraper(object):
                 raise NotADirectoryError(path)
         self._cache_path = path  # pylint: disable=attribute-defined-outside-init
 
-    def scrape(self, url, headers=None, path=None):
+    def scrape(self, headers=None, path=None):
         """GET a remote resource and save it."""
-        logging.info('Scraping %s...', url)
-        response = requests.get(url, headers=headers)
+        logging.info('Scraping %s...', self.url)
+        response = requests.get(self.url, headers=headers)
         timestamp = datetime.datetime.now()
         if path is None:
             path = self.cache_path

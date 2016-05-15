@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Web Scraper for Urbana Apartments"""
+"""Web Scraper for Seattle Apartments"""
 
 import argparse
 import logging
@@ -8,7 +8,7 @@ import os
 import sys
 
 from .survey import RentSurvey
-from .urbana import UrbanaScraper
+from .equity import EquityScraper
 
 
 def cli(parser=argparse.ArgumentParser()):
@@ -75,7 +75,10 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches
     )
 
     scrapers = {
-        'Urbana': UrbanaScraper(cache_path=os.path.join(args.cache, 'Urbana')),
+        'Urbana': EquityScraper(
+            url='http://www.equityapartments.com/seattle/ballard/urbana-apartments',
+            cache_path=os.path.join(args.cache, 'Urbana'),
+        ),
     }
     surveys = {}
 

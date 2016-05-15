@@ -1,4 +1,4 @@
-"""Library for Scraping Urbana Apartments"""
+"""Library for Scraping Equity Apartments"""
 
 import datetime
 import logging
@@ -10,13 +10,13 @@ from searents.scraper import BaseScraper
 from searents.survey import RentSurvey
 
 
-class UrbanaScraper(BaseScraper):
+class EquityScraper(BaseScraper):
 
-    """Web Scraper for Urbana Apartments"""
+    """Web Scraper for Equity Apartments"""
 
     @classmethod
     def parse(cls, html):
-        """Parse HTML from Urbana's website."""
+        """Parse HTML from an Equity website."""
         lines = html.split('\n')
         for i, line in enumerate(lines):
             if '<!-- ledgerId' in line:
@@ -65,7 +65,7 @@ class UrbanaScraper(BaseScraper):
                     html = f.read()
                 before = len(survey)
                 logging.debug('Parsing %s...', path)
-                for unit, price, floorplan in UrbanaScraper.parse(html=html):
+                for unit, price, floorplan in EquityScraper.parse(html=html):
                     survey.append({
                         'timestamp': timestamp,
                         'unit': unit,
@@ -79,16 +79,15 @@ class UrbanaScraper(BaseScraper):
         return survey
 
     def scrape_listings(self):
-        """Scrape new RentSurvey from Urbana's website."""
+        """Scrape new RentSurvey from an Equity website."""
 
-        url = 'http://www.equityapartments.com/seattle/ballard/urbana-apartments'
         user_agent = fake_useragent.UserAgent().random
-        response, timestamp = self.scrape(url, headers={'User-Agent': user_agent})
+        response, timestamp = self.scrape(headers={'User-Agent': user_agent})
         assert response.status_code == 200
 
         survey = RentSurvey()
-        logging.debug('Parsing data scraped from %s...', url)
-        for unit, price, floorplan in UrbanaScraper.parse(html=response.text):
+        logging.debug('Parsing data scraped from %s...', self.url)
+        for unit, price, floorplan in EquityScraper.parse(html=response.text):
             survey.append({
                 'timestamp': timestamp,
                 'unit': unit,
