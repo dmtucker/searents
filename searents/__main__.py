@@ -133,9 +133,9 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
         if args.show_all:
             logging.debug('Showing the %s survey...', name)
             if args.graphical:
-                survey[name].visualize(name)
+                surveys[name].visualize(name)
             else:
-                print(survey[name])
+                print(surveys[name])
 
     if args.show_all:
 
@@ -145,6 +145,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
             key=lambda listing: listing['timestamp'],
         ))
 
+        logging.debug('Showing all surveys...', name)
         if args.graphical:
             survey.visualize('All Listings')
         else:
