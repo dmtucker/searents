@@ -58,6 +58,9 @@ def cli(parser=argparse.ArgumentParser()):
         default=False,
         action='store_true',
     )
+    if len(sys.argv[1:]) < 1:
+        parser.print_usage()
+        parser.exit()
     return parser
 
 
