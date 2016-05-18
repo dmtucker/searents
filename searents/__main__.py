@@ -79,20 +79,142 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
         datefmt='%Y-%m-%d %H:%M:%S',
     )
 
+    # pylint: disable=line-too-long
     scrapers = {
+        '2300 Elliott': EquityScraper(
+            url='http://www.equityapartments.com/seattle/belltown/2300-elliott-apartments',
+            cache_path=os.path.join(args.cache, '2300_Elliott'),
+        ),
+        'Alcyone': EquityScraper(
+            url='http://www.equityapartments.com/seattle/south-lake-union/alcyone-apartments',
+            cache_path=os.path.join(args.cache, 'Alcyone'),
+        ),
+        'Bellevue Meadows': EquityScraper(
+            url='http://www.equityapartments.com/seattle/redmond/bellevue-meadows-apartments',
+            cache_path=os.path.join(args.cache, 'Bellevue_Meadows'),
+        ),
+        'Centennial Tower and Court': EquityScraper(
+            url='http://www.equityapartments.com/seattle/belltown/centennial-tower-and-court-apartments',
+            cache_path=os.path.join(args.cache, 'Centennial_Tower_and_Court'),
+        ),
+        'Chelsea Square': EquityScraper(
+            url='http://www.equityapartments.com/seattle/downtown-redmond/chelsea-square-apartments',
+            cache_path=os.path.join(args.cache, 'Chelsea_Square'),
+        ),
+        'City Square Bellevue': EquityScraper(
+            url='http://www.equityapartments.com/seattle/downtown-bellevue/city-square-bellevue-apartments',
+            cache_path=os.path.join(args.cache, 'City_Square_Bellevue'),
+        ),
         'Harbor Steps': EquityScraper(
             url='http://www.equityapartments.com/seattle/downtown-seattle/harbor-steps-apartments',
             cache_path=os.path.join(args.cache, 'Harbor_Steps'),
+        ),
+        'Heritage Ridge': EquityScraper(
+            url='http://www.equityapartments.com/seattle/lynnwood/heritage-ridge-apartments',
+            cache_path=os.path.join(args.cache, 'Heritage_Ridge'),
+        ),
+        'Harrison Square': EquityScraper(
+            url='http://www.equityapartments.com/seattle/lower-queen-anne/harrison-square-apartments',
+            cache_path=os.path.join(args.cache, 'Harrison_Square'),
+        ),
+        'Ivorywood': EquityScraper(
+            url='http://www.equityapartments.com/seattle/bothell/ivorywood-apartments',
+            cache_path=os.path.join(args.cache, 'Ivorywood'),
+        ),
+        'Junction 47': EquityScraper(
+            url='http://www.equityapartments.com/seattle/west-seattle/junction-47-apartments',
+            cache_path=os.path.join(args.cache, 'Junction_47'),
+        ),
+        'Metro on First': EquityScraper(
+            url='http://www.equityapartments.com/seattle/lower-queen-anne/metro-on-first-apartments',
+            cache_path=os.path.join(args.cache, 'Metro_on_First'),
+        ),
+        'Moda': EquityScraper(
+            url='http://www.equityapartments.com/seattle/belltown/moda-apartments',
+            cache_path=os.path.join(args.cache, 'Moda'),
+        ),
+        'Monterra in Mill Creek': EquityScraper(
+            url='http://www.equityapartments.com/seattle/mill-creek/monterra-in-mill-creek-apartments',
+            cache_path=os.path.join(args.cache, 'Monterra_in_Mill_Creek'),
         ),
         'Odin': EquityScraper(
             url='http://www.equityapartments.com/seattle/ballard/odin-apartments',
             cache_path=os.path.join(args.cache, 'Odin'),
         ),
+        'Old Town Lofts': EquityScraper(
+            url='http://www.equityapartments.com/seattle/downtown-redmond/old-town-lofts-apartments',
+            cache_path=os.path.join(args.cache, 'Old_Town_Lofts'),
+        ),
+        'Olympus': EquityScraper(
+            url='http://www.equityapartments.com/seattle/belltown/olympus-apartments',
+            cache_path=os.path.join(args.cache, 'Olympus'),
+        ),
+        'Packard Building': EquityScraper(
+            url='http://www.equityapartments.com/seattle/capitiol-hill/packard-building-apartments',
+            cache_path=os.path.join(args.cache, 'Packard_Building'),
+        ),
+        'Providence': EquityScraper(
+            url='http://www.equityapartments.com/seattle/bothell/providence-apartments',
+            cache_path=os.path.join(args.cache, 'Providence'),
+        ),
+        'Red160': EquityScraper(
+            url='http://www.equityapartments.com/seattle/downtown-redmond/red160-apartments',
+            cache_path=os.path.join(args.cache, 'Red160'),
+        ),
+        'Redmond Court': EquityScraper(
+            url='http://www.equityapartments.com/seattle/redmond/redmond-court-apartments',
+            cache_path=os.path.join(args.cache, 'Redmond_Court'),
+        ),
+        'Rianna': EquityScraper(
+            url='http://www.equityapartments.com/seattle/capitol-hill/rianna-apartments',
+            cache_path=os.path.join(args.cache, 'Rianna'),
+        ),
+        'Riverpark': EquityScraper(
+            url='http://www.equityapartments.com/seattle/downtown-redmond/riverpark-apartments',
+            cache_path=os.path.join(args.cache, 'Riverpark'),
+        ),
+        'Seventh and James': EquityScraper(
+            url='http://www.equityapartments.com/seattle/first-hill/seventh-and-james-apartments',
+            cache_path=os.path.join(args.cache, 'Seventh_and_James'),
+        ),
+        'Square One': EquityScraper(
+            url='http://www.equityapartments.com/seattle/roosevelt/square-one-apartments',
+            cache_path=os.path.join(args.cache, 'Square_One'),
+        ),
+        'Surrey Downs': EquityScraper(
+            url='http://www.equityapartments.com/seattle/factoria/surrey-downs-apartments',
+            cache_path=os.path.join(args.cache, 'Surrey_Downs'),
+        ),
+        'The Heights on Capitol Hill': EquityScraper(
+            url='http://www.equityapartments.com/seattle/capitol-hill/the-heights-on-capitol-hill-apartments',
+            cache_path=os.path.join(args.cache, 'The_Heights_on_Capitol_Hill'),
+        ),
+        'The Pearl': EquityScraper(
+            url='http://www.equityapartments.com/seattle/capitiol-hill/the-pearl-apartments-capitol-hill',
+            cache_path=os.path.join(args.cache, 'The_Pearl'),
+        ),
+        'The Reserve at Town Center': EquityScraper(
+            url='http://www.equityapartments.com/seattle/mill-creek/the-reserve-at-town-center-apartments',
+            cache_path=os.path.join(args.cache, 'The_Reserve_at_Town_Center'),
+        ),
+        'Three20': EquityScraper(
+            url='http://www.equityapartments.com/seattle/capitol-hill/three20-apartments',
+            cache_path=os.path.join(args.cache, 'Three20'),
+        ),
         'Urbana': EquityScraper(
             url='http://www.equityapartments.com/seattle/ballard/urbana-apartments',
             cache_path=os.path.join(args.cache, 'Urbana'),
         ),
+        'Uwajimaya Village': EquityScraper(
+            url='http://www.equityapartments.com/seattle/international-district/uwajimaya-village-apartments',
+            cache_path=os.path.join(args.cache, 'Uwajimaya_Village'),
+        ),
+        'Veloce': EquityScraper(
+            url='http://www.equityapartments.com/seattle/downtown-redmond/veloce-apartments',
+            cache_path=os.path.join(args.cache, 'Veloce'),
+        ),
     }
+    # pylint: enable=line-too-long
     surveys = {}
 
     for name, scraper in scrapers.items():
