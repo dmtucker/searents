@@ -83,6 +83,7 @@ class EquityScraper(BaseScraper):
                 for unit in parser.units:
                     unit['timestamp'] = timestamp
                     unit['url'] = self.url
+                    unit['unit'] = ' '.join([unit['building'], unit['unit']])
                     survey.append(unit)
                 if not len(survey) > before:
                     logging.warning('%s is empty.', path)
@@ -105,6 +106,7 @@ class EquityScraper(BaseScraper):
         for unit in parser.units:
             unit['timestamp'] = timestamp
             unit['url'] = self.url
+            unit['unit'] = ' '.join([unit['building'], unit['unit']])
             survey.append(unit)
         assert survey.is_valid()
         return survey

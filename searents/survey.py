@@ -98,13 +98,13 @@ class RentSurvey(list):
                     [listing['price'] for listing in unit_listings],
                     'b-',
                     c=unit_color if len(urls) < 2 else url_color,
-                    label='unit {0}'.format(unit),
+                    label=unit,
                     linewidth=2,
                 )
                 pyplot.text(
                     matplotlib.dates.date2num([unit_listings[-1]['timestamp']]),
                     unit_listings[-1]['price'],
-                    'unit {0} ({1})'.format(unit, unit_listings[-1]['price']),
+                    '{0} ({1})'.format(unit, unit_listings[-1]['price']),
                 )
         if name is not None:
             pyplot.gcf().canvas.set_window_title(name)
