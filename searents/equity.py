@@ -1,6 +1,7 @@
 """Library for Scraping Equity Apartments"""
 
 import datetime
+from html.parser import HTMLParser
 import logging
 import os
 
@@ -10,48 +11,60 @@ from searents.scraper import BaseScraper
 from searents.survey import RentSurvey
 
 
+class EquityParser(HTMLParser):
+
+    """Parse HTML from an Equity website."""
+
+    units = []
+    _unit = None
+
+    def handle_startendtag(self, tag, attrs):
+        if self._unit is not None:
+            for attr in attrs:
+                if attr[0] == 'src':
+                    self._unit['floorplan'] = attr[1]
+                if attr[0] == 'alt':
+                    self._unit['description'] = attr[1]
+
+    def handle_endtag(self, tag):
+        if tag == 'li' and self._unit is not None:
+            # End of Listing
+            self.units.append(self._unit)
+            self._unit = None
+
+    def handle_data(self, data):
+        data = data.strip()
+        if len(data) > 0 and self._unit is not None:
+            if self.get_starttag_text() == '<span class="pricing">':
+                self._unit['price'] = float(data.replace('$', '').replace(',', ''))
+
+    def handle_comment(self, data):
+        data = data.strip()
+        if data.startswith('ledgerId'):
+            # Start of Listing
+            ledger, building, unit = data.split(', ')
+            self._unit = {
+                'ledger': ledger.split(' ')[1],
+                'building': building.split(' ')[1],
+                'unit': unit.split(' ')[1],
+            }
+
+    def error(self, *args, **kwargs):
+        pass
+
+    def reset(self):
+        self.units = []
+        self._unit = None
+        HTMLParser.reset(self)
+
+
 class EquityScraper(BaseScraper):
 
     """Web Scraper for Equity Apartments"""
 
-    @classmethod
-    def parse(cls, html):
-        """Parse HTML from an Equity website."""
-        lines = html.split('\n')
-        for i, line in enumerate(lines):
-            if '<!-- ledgerId' in line:
-
-                unit = line.split(' ')[-2]
-                logging.debug('Unit (%s) found on line %d: %s', unit, i, line.strip())
-
-                price_i = i + 7
-                price = float(
-                    lines[price_i].split('>')[1].split('<')[0].replace('$', '').replace(',', '')
-                )
-                logging.debug(
-                    'Price (%f) found on line %d: [%s]',
-                    price,
-                    price_i,
-                    lines[price_i].strip(),
-                )
-
-                floorplan_i = i + 1
-                while ' <!--' not in lines[floorplan_i]:
-                    if '<img' in lines[floorplan_i]:
-                        break
-                    floorplan_i += 1
-                floorplan = lines[floorplan_i].split('alt="')[1].split('"')[0]
-                logging.debug(
-                    'Floorplan (%s) found on line %d: [%s]',
-                    floorplan,
-                    floorplan_i,
-                    lines[floorplan_i].strip(),
-                )
-
-                yield unit, price, floorplan
-
     def cached_listings(self):
         """Generate a RentSurvey from the scrape cache."""
+        parser = EquityParser()
         survey = None
         if self.cache_path is not None:
             survey = RentSurvey()
@@ -65,14 +78,12 @@ class EquityScraper(BaseScraper):
                     html = f.read()
                 before = len(survey)
                 logging.debug('Parsing %s...', path)
-                for unit, price, floorplan in EquityScraper.parse(html=html):
-                    survey.append({
-                        'timestamp': timestamp,
-                        'unit': unit,
-                        'price': price,
-                        'floorplan': floorplan,
-                        'url': self.url,
-                    })
+                parser.reset()
+                parser.feed(html)
+                for unit in parser.units:
+                    unit['timestamp'] = timestamp
+                    unit['url'] = self.url
+                    survey.append(unit)
                 if not len(survey) > before:
                     logging.warning('%s is empty.', path)
             survey = RentSurvey(sorted(survey, key=lambda listing: listing['timestamp']))
@@ -86,15 +97,14 @@ class EquityScraper(BaseScraper):
         response, timestamp = self.scrape(headers={'User-Agent': user_agent})
         assert response.status_code == 200
 
-        survey = RentSurvey()
         logging.debug('Parsing data scraped from %s...', self.url)
-        for unit, price, floorplan in EquityScraper.parse(html=response.text):
-            survey.append({
-                'timestamp': timestamp,
-                'unit': unit,
-                'price': price,
-                'floorplan': floorplan,
-                'url': self.url,
-            })
+        parser = EquityParser()
+        parser.feed(response.text)
+
+        survey = RentSurvey()
+        for unit in parser.units:
+            unit['timestamp'] = timestamp
+            unit['url'] = self.url
+            survey.append(unit)
         assert survey.is_valid()
         return survey
