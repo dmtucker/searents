@@ -20,7 +20,6 @@ class RentSurvey(list):
         'timestamp': datetime.datetime,
         'unit': str,
         'price': float,
-        'floorplan': str,
         'url': str,
     }
     """
@@ -59,11 +58,10 @@ class RentSurvey(list):
 
     def __str__(self):
         return '\n'.join([
-            'timestamp: {0}, unit: {1}, price: {2}, floorplan: {3}, url: {4}'.format(
+            'timestamp: {0}, unit: {1}, price: {2}, url: {3}'.format(
                 listing['timestamp'],
                 listing['unit'],
                 listing['price'],
-                listing['floorplan'],
                 listing['url']
             )
             for listing in self
@@ -77,8 +75,6 @@ class RentSurvey(list):
             if not isinstance(listing['unit'], str):
                 return False
             if not isinstance(listing['price'], float):
-                return False
-            if not isinstance(listing['floorplan'], str):
                 return False
             if not isinstance(listing['url'], str):
                 return False
@@ -95,10 +91,7 @@ class RentSurvey(list):
                 [listing['price'] for listing in unit_listings],
                 'bo-',
                 c=next(color),
-                label='unit {0} ({1})'.format(
-                    unit,
-                    unit_listings[0]['floorplan'],
-                ),
+                label='unit {0}'.format(unit),
                 linewidth=2,
             )
             pyplot.text(
