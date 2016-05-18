@@ -82,23 +82,30 @@ class RentSurvey(list):
 
     def visualize(self, name=None):
         """Plot listings."""
-        units = set([listing['unit'] for listing in self])
-        color = iter(cm.rainbow(numpy.linspace(0, 1, len(units))))  # pylint: disable=no-member
-        for unit in sorted(units):
-            unit_listings = [listing for listing in self if listing['unit'] == unit]
-            pyplot.plot_date(
-                matplotlib.dates.date2num([listing['timestamp'] for listing in unit_listings]),
-                [listing['price'] for listing in unit_listings],
-                'bo-',
-                c=next(color),
-                label='unit {0}'.format(unit),
-                linewidth=2,
-            )
-            pyplot.text(
-                matplotlib.dates.date2num([unit_listings[-1]['timestamp']]),
-                unit_listings[-1]['price'],
-                'unit {0} ({1})'.format(unit, unit_listings[-1]['price']),
-            )
+        urls = set([listing['url'] for listing in self])
+        url_colors = iter(cm.rainbow(numpy.linspace(0, 1, len(urls))))  # pylint: disable=no-member
+        for url in urls:
+            url_listings = [listing for listing in self if listing['url'] == url]
+            url_color = next(url_colors)
+            units = set([listing['unit'] for listing in url_listings])
+            unit_colors =\
+                iter(cm.rainbow(numpy.linspace(0, 1, len(units))))  # pylint: disable=no-member
+            for unit in sorted(units):
+                unit_listings = [listing for listing in url_listings if listing['unit'] == unit]
+                unit_color = next(unit_colors)
+                pyplot.plot_date(
+                    matplotlib.dates.date2num([listing['timestamp'] for listing in unit_listings]),
+                    [listing['price'] for listing in unit_listings],
+                    'b-',
+                    c=unit_color if len(urls) < 2 else url_color,
+                    label='unit {0}'.format(unit),
+                    linewidth=2,
+                )
+                pyplot.text(
+                    matplotlib.dates.date2num([unit_listings[-1]['timestamp']]),
+                    unit_listings[-1]['price'],
+                    'unit {0} ({1})'.format(unit, unit_listings[-1]['price']),
+                )
         if name is not None:
             pyplot.gcf().canvas.set_window_title(name)
         pyplot.title('Apartment Prices Over Time')
