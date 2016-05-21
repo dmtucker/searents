@@ -10,10 +10,8 @@ RUN pip install -r requirements.txt
 
 WORKDIR /src
 COPY . .
-RUN pep8 setup.py
-RUN pylint setup.py
-RUN pep8 searents
-RUN pylint searents
+RUN pep8 searents setup.py
+RUN pylint searents setup.py
 RUN rm -rf dist
 RUN python setup.py sdist
 RUN pip install dist/*
