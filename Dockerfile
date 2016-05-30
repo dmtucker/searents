@@ -15,4 +15,3 @@ RUN pylint searents setup.py
 RUN rm -rf dist
 RUN python setup.py sdist
 RUN pip install dist/*
-ENTRYPOINT ["searents"]

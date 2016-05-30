@@ -28,7 +28,12 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     include_package_data=True,
     install_requires=REQUIREMENTS,
-    entry_points={'console_scripts': ['searents = searents.__main__:main']},
+    entry_points={
+        'console_scripts': [
+            'searents = searents.__main__:main',
+            'searents-parse = searents.parse:main',
+        ],
+    },
     keywords='rent scraper',
     classifiers=[
         'License :: OSI Approved :: '

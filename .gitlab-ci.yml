@@ -10,3 +10,4 @@ test:
   - python3 setup.py sdist
   - pip3 install dist/*
   - searents --help
+  - searents-parse --help
