@@ -49,7 +49,7 @@ class RentSurvey(list):
     def load(cls, path):
         """Read a serialized RentSurvey from a file."""
         with open(path, 'r', encoding=cls.encoding) as f:
-            return cls.deserialize(serialized=f.read())
+            return cls.deserialize(f.read())
 
     def save(self, path):
         """Write a serialized RentSurvey to a file."""
