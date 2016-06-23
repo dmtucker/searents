@@ -3,6 +3,7 @@
 import copy
 import datetime
 import json
+import os
 
 import matplotlib
 from matplotlib import pyplot
@@ -27,8 +28,9 @@ class RentSurvey(object):
     encoding = 'utf-8'
     datetime_format = '%Y-%m-%d %H:%M:%S.%f'
 
-    def __init__(self, listings=None):
+    def __init__(self, listings=None, path=None):
         self.listings = [] if listings is None else listings
+        self.path = path
 
     def __str__(self):
         return '\n'.join([
@@ -40,6 +42,21 @@ class RentSurvey(object):
             )
             for listing in self.listings
         ])
+
+    @property
+    def path(self):
+        """Get the default save path."""
+        return self._path
+
+    @path.setter
+    def path(self, path):
+        if path is not None:
+            path = os.path.realpath(path)
+            if not os.path.exists(path):
+                open(path, 'a').close()
+            if not os.path.isfile(path):
+                raise IsADirectoryError(path)
+        self._path = path  # pylint: disable=attribute-defined-outside-init
 
     @classmethod
     def deserialize(cls, serialized):
