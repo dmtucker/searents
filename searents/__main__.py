@@ -3,36 +3,81 @@
 import argparse
 import logging
 import os
+import re
 import sys
 
 from searents.survey import RentSurvey
 from searents.equity import EquityScraper
 
 
-def cli(parser=argparse.ArgumentParser()):
-    """ Specify and get command-line parameters. """
+def fetch_handler(args, scrapers):  # pylint: disable=unused-argument
+    """Fetch new listings."""
+
+    for name, scraper in scrapers.items():
+
+        survey = RentSurvey(path='{0}.json'.format(scraper.cache_path))
+        survey.load()
+
+        logging.debug('Fetching new listings from %s...', name)
+        before = len(survey.listings)
+        survey.listings.extend(scraper.scrape_listings().listings)
+        logging.info('%d new listings were fetched.', len(survey.listings) - before)
+
+        print(survey)
+
+        logging.info('Writing the new listings to %s...', survey.path)
+        survey.save()
+
+
+def show_handler(args, scrapers):
+    """Show listings."""
+
+    for name, scraper in scrapers.items():
+
+        survey = RentSurvey(path='{0}.json'.format(scraper.cache_path))
+        survey.load()
+
+        logging.debug('Sorting the %s survey...', name)
+        survey.listings.sort(key=lambda listing: listing['timestamp'])
+
+        logging.debug('Showing the %s survey...', name)
+        if args.graphical:
+            survey.visualize(name)
+        else:
+            print(survey)
+
+
+def verify_handler(args, scrapers):
+    """Verify the survey against the scrape cache."""
+
+    for name, scraper in scrapers.items():
+
+        survey = RentSurvey(path='{0}.json'.format(scraper.cache_path))
+        survey.load()
+
+        logging.debug('Generating a survey from the cache at %s...', scraper.cache_path)
+        cached_survey = scraper.cached_listings()
+
+        if args.regenerate:
+            logging.info('Overwriting the survey at %s...', survey.path)
+            survey.listings = cached_survey.listings
+            survey.save()
+
+        logging.info('Verifying the %s survey...', name)
+        if not survey == cached_survey:
+            return 1
+
+
+def cli(parser=None):
+    """Parse CLI arguments and options."""
+
+    if parser is None:
+        parser = argparse.ArgumentParser()
+
     parser.add_argument(
         '--cache', '-c',
         help='Specify the directory to store scrape caches in.',
         default='searents_scrapes',
-    )
-    parser.add_argument(
-        '--graphical',
-        help='Plot listings.',
-        default=False,
-        action='store_true',
-    )
-    parser.add_argument(
-        '--fetch',
-        help='Fetch new listings.',
-        default=False,
-        action='store_true',
-    )
-    parser.add_argument(
-        '--regenerate',
-        help='Use the scrape cache to regenerate the survey (requires --verify).',
-        default=False,
-        action='store_true',
     )
     parser.add_argument(
         '--log-file',
@@ -45,27 +90,51 @@ def cli(parser=argparse.ArgumentParser()):
         default='INFO',
     )
     parser.add_argument(
-        '--show-all',
-        help='Show all listings.',
+        '--scraper',
+        help='Specify a search pattern for scraper names.',
+        default=".*",
+    )
+
+    subparsers = parser.add_subparsers()
+
+    fetch_parser = subparsers.add_parser(
+        'fetch',
+        help=fetch_handler.__doc__,
+    )
+    fetch_parser.set_defaults(func=fetch_handler)
+
+    show_parser = subparsers.add_parser(
+        'show',
+        help=show_handler.__doc__,
+    )
+    show_parser.add_argument(
+        '--graphical',
+        help='Plot listings.',
         default=False,
         action='store_true',
     )
-    parser.add_argument(
-        '--verify',
-        help='Verify the survey against the scrape cache.',
+    show_parser.set_defaults(func=show_handler)
+
+    verify_parser = subparsers.add_parser(
+        'verify',
+        help=verify_handler.__doc__,
+    )
+    verify_parser.add_argument(
+        '--regenerate',
+        help='Use the scrape cache to regenerate the survey.',
         default=False,
         action='store_true',
     )
-    if len(sys.argv[1:]) < 1:
-        parser.print_usage()
-        parser.exit()
+    verify_parser.set_defaults(func=verify_handler)
+
     return parser
 
 
-def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-many-statements
+def main(args=None):
     """Execute CLI commands."""
 
-    exit_status = 0
+    if args is None:
+        args = cli().parse_args()
 
     log_level = getattr(logging, args.log_level.upper(), None)
     if not isinstance(log_level, int):
@@ -213,68 +282,15 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
         ),
     }
     # pylint: enable=line-too-long
-    surveys = {}
 
-    for name, scraper in scrapers.items():
-
-        logging.debug('Reading the survey for %s...', name)
-        surveys[name] = RentSurvey(path='{0}.json'.format(scraper.cache_path))
-        surveys[name].load()
-        logging.debug('%d listings', len(surveys[name].listings))
-
-        if args.fetch:
-            logging.debug('Fetching new listings from %s...', name)
-            survey = scraper.scrape_listings()
-            before = len(surveys[name].listings)
-            surveys[name].listings.extend(survey.listings)
-            logging.info('%d new listings were fetched.', len(surveys[name].listings) - before)
-            if not args.show_all:
-                if args.graphical:
-                    survey.visualize(' '.join([name, str(survey.listings[0]['timestamp'])]))
-                else:
-                    print(survey)
-            logging.info('Writing the new listings to %s...', surveys[name].path)
-            surveys[name].save()
-
-        if args.verify:
-            logging.debug('Generating a survey from the cache at %s...', scraper.cache_path)
-            cached_survey = scraper.cached_listings()
-            logging.info('Verifying the survey at %s...', surveys[name].path)
-            if surveys[name] != cached_survey:
-                logging.warning('The %s survey is not consistent with its cache.', name)
-                if args.regenerate:
-                    logging.info('Overwriting the survey at %s...', surveys[name].path)
-                    surveys[name].listings = cached_survey.listings
-                    surveys[name].save()
-                else:
-                    exit_status += 1
-            if surveys[name] == cached_survey:
-                logging.info('The %s survey is consistent with its cache.', name)
-
-        if args.show_all:
-            logging.debug('Showing the %s survey...', name)
-            if args.graphical:
-                surveys[name].visualize(name)
-            else:
-                print(surveys[name])
-
-    if args.show_all:
-
-        logging.debug('Combining all surveys...')
-        survey = RentSurvey(
-            listings=[listing for survey in surveys.values() for listing in survey.listings],
-        )
-
-        logging.debug('Sorting all surveys...')
-        survey.listings.sort(key=lambda listing: listing['timestamp'])
-
-        logging.debug('Showing all surveys...')
-        if args.graphical:
-            survey.visualize('All Listings')
-        else:
-            print(survey)
-
-    return exit_status
+    return args.func(
+        args,
+        {
+            name: scraper
+            for name, scraper in scrapers.items()
+            if re.search(args.scraper, name) is not None
+        },
+    )
 
 
 if __name__ == '__main__':
