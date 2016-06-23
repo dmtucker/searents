@@ -278,3 +278,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
             print(survey)
 
     return exit_status
+
+
+if __name__ == '__main__':
+    sys.exit(main())
