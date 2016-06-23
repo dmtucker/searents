@@ -217,15 +217,10 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
 
     for name, scraper in scrapers.items():
 
-        survey_path = '{0}.json'.format(scraper.cache_path)
-        logging.debug('Reading the survey at %s...', survey_path)
-        try:
-            surveys[name] = RentSurvey.load(survey_path)
-            logging.debug('%d listings', len(surveys[name].listings))
-        except FileNotFoundError:
-            logging.debug('%s not found', survey_path)
-            open(survey_path, 'a').close()
-            surveys[name] = RentSurvey()
+        logging.debug('Reading the survey for %s...', name)
+        surveys[name] = RentSurvey(path='{0}.json'.format(scraper.cache_path))
+        surveys[name].load()
+        logging.debug('%d listings', len(surveys[name].listings))
 
         if args.fetch:
             logging.debug('Fetching new listings from %s...', name)
@@ -238,19 +233,19 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
                     survey.visualize(' '.join([name, str(survey.listings[0]['timestamp'])]))
                 else:
                     print(survey)
-            logging.info('Writing the new listings to %s...', survey_path)
-            surveys[name].save(survey_path)
+            logging.info('Writing the new listings to %s...', surveys[name].path)
+            surveys[name].save()
 
         if args.verify:
             logging.debug('Generating a survey from the cache at %s...', scraper.cache_path)
             cached_survey = scraper.cached_listings()
-            logging.info('Verifying the survey at %s with a generated survey...', survey_path)
+            logging.info('Verifying the survey at %s...', surveys[name].path)
             if surveys[name] != cached_survey:
                 logging.warning('The %s survey is not consistent with its cache.', name)
                 if args.regenerate:
-                    logging.info('Overwriting the survey at %s...', survey_path)
-                    cached_survey.save(survey_path)
-                    surveys[name] = cached_survey
+                    logging.info('Overwriting the survey at %s...', surveys[name].path)
+                    surveys[name].listings = cached_survey.listings
+                    surveys[name].save()
                 else:
                     exit_status += 1
             if surveys[name] == cached_survey:
@@ -265,11 +260,13 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
 
     if args.show_all:
 
-        logging.debug('Combining and sorting all surveys...')
-        survey = RentSurvey(sorted(
-            [listing for survey in surveys.values() for listing in survey.listings],
-            key=lambda listing: listing['timestamp'],
-        ))
+        logging.debug('Combining all surveys...')
+        survey = RentSurvey(
+            listings=[listing for survey in surveys.values() for listing in survey.listings],
+        )
+
+        logging.debug('Sorting all surveys...')
+        survey.listings.sort(key=lambda listing: listing['timestamp'])
 
         logging.debug('Showing all surveys...')
         if args.graphical:

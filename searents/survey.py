@@ -53,21 +53,21 @@ class RentSurvey(object):
         if path is not None:
             path = os.path.realpath(path)
             if not os.path.exists(path):
-                open(path, 'a').close()
+                with open(path, 'w', encoding=self.encoding) as f:
+                    f.write(self.serialize())
             if not os.path.isfile(path):
                 raise IsADirectoryError(path)
         self._path = path  # pylint: disable=attribute-defined-outside-init
 
-    @classmethod
-    def deserialize(cls, serialized):
+    def deserialize(self, serialized):
         """Recreate a serialized RentSurvey."""
-        survey = cls(listings=json.loads(serialized))
-        for listing in survey.listings:
+        listings = json.loads(serialized)
+        for listing in listings:
             listing['timestamp'] = datetime.datetime.strptime(
                 listing['timestamp'],
-                cls.datetime_format,
+                self.datetime_format,
             )
-        return survey
+        self.listings.extend(listings)
 
     def serialize(self):
         """Generate a string that can be used to recreate a RentSurvey."""
@@ -76,14 +76,17 @@ class RentSurvey(object):
             listing['timestamp'] = listing['timestamp'].strftime(self.datetime_format)
         return json.dumps(serializable, indent=4, sort_keys=True)
 
-    @classmethod
-    def load(cls, path):
+    def load(self, path=None):
         """Read a serialized RentSurvey from a file."""
-        with open(path, 'r', encoding=cls.encoding) as f:
-            return cls.deserialize(f.read())
+        if path is None:
+            path = self.path
+        with open(path, 'r', encoding=self.encoding) as f:
+            return self.deserialize(f.read())
 
-    def save(self, path):
+    def save(self, path=None):
         """Write a serialized RentSurvey to a file."""
+        if path is None:
+            path = self.path
         with open(path, 'w', encoding=self.encoding) as f:
             return f.write(self.serialize())
 

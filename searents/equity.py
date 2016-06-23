@@ -87,9 +87,7 @@ class EquityScraper(BaseScraper):
                     survey.listings.append(unit)
                 if not len(survey.listings) > before:
                     logging.warning('%s is empty.', path)
-            survey = RentSurvey(
-                listings=sorted(survey.listings, key=lambda listing: listing['timestamp']),
-            )
+            survey.listings.sort(key=lambda listing: listing['timestamp'])
             assert survey.is_valid()
         return survey
 
