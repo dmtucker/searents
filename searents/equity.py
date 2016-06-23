@@ -76,7 +76,7 @@ class EquityScraper(BaseScraper):
                 path = os.path.join(self.cache_path, filename)
                 with open(path, 'r', encoding=self.encoding) as f:
                     html = f.read()
-                before = len(survey)
+                before = len(survey.listings)
                 logging.debug('Parsing %s...', path)
                 parser.reset()
                 parser.feed(html)
@@ -84,10 +84,12 @@ class EquityScraper(BaseScraper):
                     unit['timestamp'] = timestamp
                     unit['url'] = self.url
                     unit['unit'] = ' '.join([unit['building'], unit['unit']])
-                    survey.append(unit)
-                if not len(survey) > before:
+                    survey.listings.append(unit)
+                if not len(survey.listings) > before:
                     logging.warning('%s is empty.', path)
-            survey = RentSurvey(sorted(survey, key=lambda listing: listing['timestamp']))
+            survey = RentSurvey(
+                listings=sorted(survey.listings, key=lambda listing: listing['timestamp']),
+            )
             assert survey.is_valid()
         return survey
 
@@ -107,6 +109,6 @@ class EquityScraper(BaseScraper):
             unit['timestamp'] = timestamp
             unit['url'] = self.url
             unit['unit'] = ' '.join([unit['building'], unit['unit']])
-            survey.append(unit)
+            survey.listings.append(unit)
         assert survey.is_valid()
         return survey

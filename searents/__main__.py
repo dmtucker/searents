@@ -221,7 +221,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
         logging.debug('Reading the survey at %s...', survey_path)
         try:
             surveys[name] = RentSurvey.load(survey_path)
-            logging.debug('%d listings', len(surveys[name]))
+            logging.debug('%d listings', len(surveys[name].listings))
         except FileNotFoundError:
             logging.debug('%s not found', survey_path)
             open(survey_path, 'a').close()
@@ -230,12 +230,12 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
         if args.fetch:
             logging.debug('Fetching new listings from %s...', name)
             survey = scraper.scrape_listings()
-            before = len(surveys[name])
-            surveys[name].extend(survey)
-            logging.info('%d new listings were fetched.', len(surveys[name]) - before)
+            before = len(surveys[name].listings)
+            surveys[name].listings.extend(survey.listings)
+            logging.info('%d new listings were fetched.', len(surveys[name].listings) - before)
             if not args.show_all:
                 if args.graphical:
-                    survey.visualize(' '.join([name, str(survey[0]['timestamp'])]))
+                    survey.visualize(' '.join([name, str(survey.listings[0]['timestamp'])]))
                 else:
                     print(survey)
             logging.info('Writing the new listings to %s...', survey_path)
@@ -267,7 +267,7 @@ def main(args=cli().parse_args()):  # pylint: disable=too-many-branches, too-man
 
         logging.debug('Combining and sorting all surveys...')
         survey = RentSurvey(sorted(
-            [listing for survey in surveys.values() for listing in survey],
+            [listing for survey in surveys.values() for listing in survey.listings],
             key=lambda listing: listing['timestamp'],
         ))
 
