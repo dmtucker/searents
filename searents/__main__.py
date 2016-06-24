@@ -64,7 +64,7 @@ def verify_handler(args, scrapers):
             survey.save()
 
         logging.info('Verifying the %s survey...', name)
-        if not survey == cached_survey:
+        if survey != cached_survey:
             return 1
 
 

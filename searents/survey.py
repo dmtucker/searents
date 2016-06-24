@@ -43,6 +43,15 @@ class RentSurvey(object):
             for listing in self.listings
         ])
 
+    def __eq__(self, survey):
+        return (
+            hasattr(survey, 'listings') and
+            len(self.listings) == len(survey.listings) and (
+                sorted(self.listings, key=lambda listing: listing['timestamp']) ==
+                sorted(survey.listings, key=lambda listing: listing['timestamp'])
+            )
+        )
+
     @property
     def path(self):
         """Get the default save path."""
