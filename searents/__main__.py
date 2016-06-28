@@ -40,6 +40,16 @@ def show_handler(args, scrapers):
         logging.debug('Sorting the %s survey...', name)
         survey.listings.sort(key=lambda listing: listing['timestamp'])
 
+        logging.debug('Filtering listings...')
+        filtered_listings = []
+        for listing in survey.listings:
+            for k, value in listing.items():
+                if re.search(args.filter_key, str(k)) is not None and \
+                        re.search(args.filter, str(value)) is not None:
+                    filtered_listings.append(listing)
+                    break
+        survey.listings = filtered_listings
+
         logging.debug('Showing the %s survey...', name)
         if args.graphical:
             survey.visualize(name)
@@ -106,6 +116,16 @@ def cli(parser=None):
     show_parser = subparsers.add_parser(
         'show',
         help=show_handler.__doc__,
+    )
+    show_parser.add_argument(
+        '--filter', '-f',
+        help='Specify a regex to filter listings.',
+        default='.*',
+    )
+    show_parser.add_argument(
+        '--filter-key', '-k',
+        help='Specify a regex to filter listings by key.',
+        default='.*',
     )
     show_parser.add_argument(
         '--graphical',
