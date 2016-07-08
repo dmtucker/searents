@@ -41,14 +41,14 @@ def show_handler(args, scrapers):
         survey.listings.sort(key=lambda listing: listing['timestamp'])
 
         logging.debug('Filtering listings...')
-        filtered_listings = []
-        for listing in survey.listings:
-            for k, value in listing.items():
-                if re.search(args.filter_key, str(k)) is not None and \
-                        re.search(args.filter, str(value)) is not None:
-                    filtered_listings.append(listing)
-                    break
-        survey.listings = filtered_listings
+        survey.listings = list(filter(
+            lambda listing: len([
+                value for k, value in listing.items()
+                if re.search(args.filter_key, str(k)) is not None and
+                re.search(args.filter, str(value)) is not None
+            ]) > 0,
+            survey.listings,
+        ))
 
         if len(survey.listings) > 0:
             logging.debug('Showing the %s survey...', name)
