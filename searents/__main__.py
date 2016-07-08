@@ -50,11 +50,12 @@ def show_handler(args, scrapers):
                     break
         survey.listings = filtered_listings
 
-        logging.debug('Showing the %s survey...', name)
-        if args.graphical:
-            survey.visualize(name)
-        else:
-            print(survey)
+        if len(survey.listings) > 0:
+            logging.debug('Showing the %s survey...', name)
+            if args.graphical:
+                survey.visualize(name)
+            else:
+                print(survey)
 
 
 def verify_handler(args, scrapers):
