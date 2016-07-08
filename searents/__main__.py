@@ -129,7 +129,7 @@ def cli(parser=None):
         default='.*',
     )
     show_parser.add_argument(
-        '--graphical',
+        '--graphical', '-g',
         help='Plot listings.',
         default=False,
         action='store_true',
