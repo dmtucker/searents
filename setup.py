@@ -30,7 +30,7 @@ setup(
     install_requires=REQUIREMENTS,
     entry_points={
         'console_scripts': [
-            'searents = searents.__main__:main',
+            'searents = searents.cli:main',
             'searents-parse = searents.parse:main',
         ],
     },
