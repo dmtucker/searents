@@ -1,9 +1,7 @@
 """Library for Scraping Equity Apartments"""
 
-import datetime
 from html.parser import HTMLParser
 import logging
-import os
 
 import fake_useragent
 
@@ -62,51 +60,38 @@ class EquityScraper(BaseScraper):
 
     """Web Scraper for Equity Apartments"""
 
-    def cached_listings(self):
-        """Generate a RentSurvey from the scrape cache."""
-        parser = EquityParser()
-        survey = None
-        if self.cache_path is not None:
-            survey = RentSurvey()
-            for filename in sorted(os.listdir(self.cache_path)):
-                timestamp = datetime.datetime.strptime(
-                    os.path.splitext(filename)[0],
-                    self.datetime_format,
-                )
-                path = os.path.join(self.cache_path, filename)
-                with open(path, 'r', encoding=self.encoding) as f:
-                    html = f.read()
-                before = len(survey.listings)
-                logging.debug('Parsing %s...', path)
-                parser.reset()
-                parser.feed(html)
-                for unit in parser.units:
-                    unit['timestamp'] = timestamp
-                    unit['url'] = self.url
-                    unit['unit'] = ' '.join([unit['building'], unit['unit']])
-                    survey.listings.append(unit)
-                if not len(survey.listings) > before:
-                    logging.warning('%s is empty.', path)
-            survey.listings.sort(key=lambda listing: listing['timestamp'])
-            assert survey.is_valid()
-        return survey
+    def __init__(self, url, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.url = url
 
-    def scrape_listings(self):
-        """Scrape new RentSurvey from an Equity website."""
-
-        user_agent = fake_useragent.UserAgent().random
-        response, timestamp = self.scrape(headers={'User-Agent': user_agent})
-        assert response.status_code == 200
-
-        logging.debug('Parsing data scraped from %s...', self.url)
-        parser = EquityParser()
-        parser.feed(response.text)
-
+    def survey(self, scrape, parser=EquityParser()):
+        """Generate a RentSurvey from a Scrape."""
+        parser.reset()
+        parser.feed(scrape.text)
         survey = RentSurvey()
         for unit in parser.units:
-            unit['timestamp'] = timestamp
-            unit['url'] = self.url
+            unit['timestamp'] = scrape.timestamp
+            unit['url'] = scrape.url or self.url
             unit['unit'] = ' '.join([unit['building'], unit['unit']])
             survey.listings.append(unit)
+        assert survey.is_valid()
+        return survey
+
+    def scrape_survey(self):
+        """Scrape a RentSurvey from an Equity website."""
+        return self.survey(
+            self.scrape(self.url, headers={'User-Agent': fake_useragent.UserAgent().random})
+        )
+
+    @property
+    def cache_survey(self):
+        """Generate a RentSurvey from the Scrape cache."""
+        assert self.cache_path is not None
+        survey = RentSurvey()
+        for scrape in self.cached_scrapes:
+            listings = self.survey(scrape).listings
+            if len(listings) < 1:
+                logging.warning('%s is empty.', scrape.path)
+            survey.listings.extend(listings)
         assert survey.is_valid()
         return survey

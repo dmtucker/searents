@@ -20,7 +20,7 @@ def fetch_handler(args, scrapers):  # pylint: disable=unused-argument
 
         logging.debug('Fetching new listings from %s...', name)
         before = len(survey.listings)
-        survey.listings.extend(scraper.scrape_listings().listings)
+        survey.listings.extend(scraper.scrape_survey().listings)
         logging.info('%d new listings were fetched.', len(survey.listings) - before)
 
         print(survey)
@@ -67,15 +67,15 @@ def verify_handler(args, scrapers):
         survey.load()
 
         logging.debug('Generating a survey from the cache at %s...', scraper.cache_path)
-        cached_survey = scraper.cached_listings()
+        cache_survey = scraper.cache_survey
 
         if args.regenerate:
             logging.info('Overwriting the survey at %s...', survey.path)
-            survey.listings = cached_survey.listings
+            survey.listings = cache_survey.listings
             survey.save()
 
         logging.info('Verifying the %s survey...', name)
-        if survey != cached_survey:
+        if survey != cache_survey:
             return 1
 
 
