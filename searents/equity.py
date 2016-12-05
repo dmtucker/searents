@@ -53,7 +53,7 @@ class EquityParser(HTMLParser):
     def reset(self):
         self.units = []
         self._unit = None
-        HTMLParser.reset(self)
+        super().reset()
 
 
 class EquityScraper(BaseScraper):
