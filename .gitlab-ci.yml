@@ -3,10 +3,11 @@ test:
   script:
     - pip install --upgrade pip
     - pip install -r requirements.txt
+    - pip install pep8 pylint
+    - rm -rf dist/
     - ./setup.py sdist
     - pip install dist/*
     - searents --help
     - searents-parse --help
-    - pip install pep8 pylint
     - pep8 searents setup.py
     - pylint searents setup.py
