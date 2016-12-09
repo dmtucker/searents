@@ -25,7 +25,7 @@ setup(
     author_email='david@tucker.name',
     license='LGPLv2+',
     url='https://gitlab.com/dmtucker/searents',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    packages=find_packages(),
     include_package_data=True,
     install_requires=REQUIREMENTS,
     entry_points={
