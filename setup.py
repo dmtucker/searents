@@ -22,7 +22,7 @@ setup(
     description='A Scraper of Seattle Rents',
     long_description=README,
     author='David Tucker',
-    author_email='david.michael.tucker@gmail.com',
+    author_email='david@tucker.name',
     license='LGPLv2+',
     url='https://gitlab.com/dmtucker/searents',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),

@@ -1,5 +1,5 @@
 FROM python:3
-MAINTAINER david.michael.tucker@gmail.com
+MAINTAINER david@tucker.name
 
 RUN pip install --upgrade pip
 RUN pip install pep8 pylint
