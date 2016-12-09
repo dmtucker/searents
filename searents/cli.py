@@ -10,6 +10,9 @@ from searents.survey import RentSurvey
 from searents.equity import EquityScraper
 
 
+DIRECTORY = os.path.join(os.environ.get('HOME', ''), '.searents')
+
+
 def fetch_handler(args, scrapers):  # pylint: disable=unused-argument
     """Fetch new listings."""
 
@@ -88,12 +91,12 @@ def cli(parser=None):
     parser.add_argument(
         '--cache', '-c',
         help='Specify the directory to store scrape caches in.',
-        default='searents_scrapes',
+        default=os.path.join(DIRECTORY, 'cache'),
     )
     parser.add_argument(
         '--log-file',
-        help='Specify the directory to store scrape caches in.',
-        default=os.path.join('/var', 'log', 'searents.log'),
+        help='Specify the file to log to.',
+        default=os.path.join(DIRECTORY, 'searents.log'),
     )
     parser.add_argument(
         '--log-level',
@@ -156,6 +159,8 @@ def main(args=None):
 
     if args is None:
         args = cli().parse_args()
+
+    os.makedirs(DIRECTORY, exist_ok=True)
 
     log_level = getattr(logging, args.log_level.upper(), None)
     if not isinstance(log_level, int):
