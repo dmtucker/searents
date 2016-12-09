@@ -317,7 +317,3 @@ def main(args=None):
             if re.search(args.scraper, name) is not None
         },
     )
-
-
-if __name__ == '__main__':
-    sys.exit(main())
