@@ -4,7 +4,6 @@ import argparse
 import logging
 import os
 import re
-import sys
 
 from searents.survey import RentSurvey
 from searents.equity import EquityScraper
