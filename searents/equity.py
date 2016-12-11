@@ -60,8 +60,9 @@ class EquityScraper(BaseScraper):
 
     """Web Scraper for Equity Apartments"""
 
-    def __init__(self, url, *args, **kwargs):
+    def __init__(self, name, url, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.name = name
         self.url = url
 
     def survey(self, scrape, parser=EquityParser()):
@@ -70,9 +71,10 @@ class EquityScraper(BaseScraper):
         parser.feed(scrape.text)
         survey = RentSurvey()
         for unit in parser.units:
+            unit['scraper'] = self.name
             unit['timestamp'] = scrape.timestamp
-            unit['url'] = scrape.url or self.url
             unit['unit'] = ' '.join([unit['building'], unit['unit']])
+            unit['url'] = scrape.url or self.url
             survey.listings.append(unit)
         assert survey.is_valid()
         return survey
