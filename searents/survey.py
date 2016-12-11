@@ -1,9 +1,6 @@
 """Structures for Tracking Listings"""
 
-import copy
 import datetime
-import json
-import os
 
 import matplotlib
 from matplotlib import pyplot
@@ -18,95 +15,52 @@ class RentSurvey(object):
 
     Listings are dicts of the following form:
     {
+        'price': float,
+        'scraper': str,
         'timestamp': datetime.datetime,
         'unit': str,
-        'price': float,
         'url': str,
     }
     """
 
-    encoding = 'utf-8'
-    datetime_format = '%Y-%m-%d %H:%M:%S.%f'
-
-    def __init__(self, listings=None, path=None):
+    def __init__(self, listings=None):
         self.listings = [] if listings is None else listings
-        self.path = path
 
     def __str__(self):
         return '\n'.join([
-            'timestamp: {0}, unit: {1}, price: {2}, url: {3}'.format(
-                listing['timestamp'],
-                listing['unit'],
-                listing['price'],
-                listing['url']
+            '[{timestamp}] ${price:,.2f} {scraper} {unit}'.format(
+                price=listing['price'],
+                scraper=listing['scraper'],
+                timestamp=listing['timestamp'],
+                unit=listing['unit'],
             )
             for listing in self.listings
         ])
 
     def __eq__(self, survey):
-        return (
-            hasattr(survey, 'listings') and
-            len(self.listings) == len(survey.listings) and (
-                sorted(self.listings, key=lambda listing: listing['timestamp']) ==
-                sorted(survey.listings, key=lambda listing: listing['timestamp'])
-            )
-        )
-
-    @property
-    def path(self):
-        """Get the default save path."""
-        return self._path
-
-    @path.setter
-    def path(self, path):
-        if path is not None:
-            path = os.path.realpath(path)
-            if not os.path.exists(path):
-                with open(path, 'w', encoding=self.encoding) as f:
-                    f.write(self.serialize())
-            if not os.path.isfile(path):
-                raise IsADirectoryError(path)
-        self._path = path  # pylint: disable=attribute-defined-outside-init
-
-    def deserialize(self, serialized):
-        """Recreate a serialized RentSurvey."""
-        listings = json.loads(serialized)
-        for listing in listings:
-            listing['timestamp'] = datetime.datetime.strptime(
-                listing['timestamp'],
-                self.datetime_format,
-            )
-        self.listings.extend(listings)
-
-    def serialize(self):
-        """Generate a string that can be used to recreate a RentSurvey."""
-        serializable = copy.deepcopy(self.listings)
-        for listing in serializable:
-            listing['timestamp'] = listing['timestamp'].strftime(self.datetime_format)
-        return json.dumps(serializable, indent=4, sort_keys=True)
-
-    def load(self, path=None):
-        """Read a serialized RentSurvey from a file."""
-        if path is None:
-            path = self.path
-        with open(path, 'r', encoding=self.encoding) as f:
-            return self.deserialize(f.read())
-
-    def save(self, path=None):
-        """Write a serialized RentSurvey to a file."""
-        if path is None:
-            path = self.path
-        with open(path, 'w', encoding=self.encoding) as f:
-            return f.write(self.serialize())
+        return all([
+            hasattr(survey, 'listings'),
+            len(self.listings) == len(survey.listings),
+            all(
+                survey_listing[key] == self_listing[key]
+                for self_listing, survey_listing in zip(
+                    sorted(self.listings, key=lambda listing: listing['timestamp']),
+                    sorted(survey.listings, key=lambda listing: listing['timestamp']),
+                )
+                for key in ['price', 'scraper', 'timestamp', 'unit', 'url']
+            ),
+        ])
 
     def is_valid(self):
         """Verify all contained listings are well-formed."""
         for listing in self.listings:
+            if not isinstance(listing['price'], float):
+                return False
+            if not isinstance(listing['scraper'], str):
+                return False
             if not isinstance(listing['timestamp'], datetime.datetime):
                 return False
             if not isinstance(listing['unit'], str):
-                return False
-            if not isinstance(listing['price'], float):
                 return False
             if not isinstance(listing['url'], str):
                 return False

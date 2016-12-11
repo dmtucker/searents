@@ -4,6 +4,11 @@ import argparse
 import logging
 import os
 import re
+import sqlite3
+import sys
+import time
+
+import dateutil.parser
 
 from searents.survey import RentSurvey
 from searents.equity import EquityScraper
@@ -12,34 +17,93 @@ from searents.equity import EquityScraper
 DIRECTORY = os.path.join(os.environ.get('HOME', ''), '.searents')
 
 
-def fetch_handler(args, scrapers):  # pylint: disable=unused-argument
+def database_connection(*args, **kwargs):
+    """Create a connection to the database."""
+    sqlite3.register_converter('TIMESTAMP', dateutil.parser.parse)
+    kwargs['detect_types'] = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES
+    connection = sqlite3.connect(*args, **kwargs)
+    connection.row_factory = sqlite3.Row
+    connection.execute(
+        'CREATE TABLE IF NOT EXISTS listings'
+        '(timestamp TIMESTAMP, url TEXT, scraper TEXT, unit TEXT, price REAL)'
+    )
+    connection.commit()
+    return connection
+
+
+def fetch_handler(args, scrapers, connection):
     """Fetch new listings."""
 
-    for name, scraper in scrapers.items():
+    for scraper in scrapers:
 
-        survey = RentSurvey(path='{0}.json'.format(scraper.cache_path))
-        survey.load()
+        logging.debug('Fetching new listings from %s...', scraper.name)
+        survey = scraper.scrape_survey()
 
-        logging.debug('Fetching new listings from %s...', name)
-        before = len(survey.listings)
-        survey.listings.extend(scraper.scrape_survey().listings)
-        logging.info('%d new listings were fetched.', len(survey.listings) - before)
-
+        logging.info('%d new listings were fetched.', len(survey.listings))
         print(survey)
 
-        logging.info('Writing the new listings to %s...', survey.path)
-        survey.save()
+        logging.info('Writing the new listings to the database at %s...', args.database)
+        connection.executemany(
+            'INSERT INTO listings VALUES (?, ?, ?, ?, ?)',
+            [
+                (
+                    listing['timestamp'],
+                    listing['url'],
+                    scraper.name,
+                    listing['unit'],
+                    listing['price'],
+                )
+                for listing in survey.listings
+            ],
+        )
+        connection.commit()
 
 
-def show_handler(args, scrapers):
+def regenerate_handler(args, scrapers, connection):
+    """Create a database from the scrape cache."""
+
+    logging.info('Recreating the database at %s...', args.database)
+    connection.close()
+    if os.path.exists(args.database):
+        os.rename(args.database, args.database + '.' + str(time.time()))
+    connection = database_connection(args.database)
+
+    for scraper in scrapers:
+
+        logging.debug('Generating a survey from the cache at %s...', scraper.cache_path)
+        survey = scraper.cache_survey
+
+        logging.debug('Writing the %s survey to the database...', scraper.name)
+        connection.executemany(
+            'INSERT INTO listings VALUES (?, ?, ?, ?, ?)',
+            [
+                (
+                    listing['timestamp'],
+                    listing['url'],
+                    scraper.name,
+                    listing['unit'],
+                    listing['price'],
+                )
+                for listing in survey.listings
+            ],
+        )
+        connection.commit()
+
+    connection.close()
+    sys.exit()
+
+
+def show_handler(args, scrapers, connection):
     """Show listings."""
 
-    for name, scraper in scrapers.items():
+    for scraper in scrapers:
 
-        survey = RentSurvey(path='{0}.json'.format(scraper.cache_path))
-        survey.load()
+        logging.info('Reading %s listings from the database at %s...', scraper.name, args.database)
+        cursor = connection.cursor()
+        cursor.execute('SELECT * FROM listings WHERE scraper=?', (scraper.name,))
+        survey = RentSurvey(listings=[dict(row) for row in cursor.fetchall()])
 
-        logging.debug('Sorting the %s survey...', name)
+        logging.debug('Sorting the %s survey...', scraper.name)
         survey.listings.sort(key=lambda listing: listing['timestamp'])
 
         logging.debug('Filtering listings...')
@@ -53,30 +117,26 @@ def show_handler(args, scrapers):
         ))
 
         if len(survey.listings) > 0:
-            logging.debug('Showing the %s survey...', name)
+            logging.debug('Showing the %s survey...', scraper.name)
             if args.graphical:
-                survey.visualize(name)
+                survey.visualize(scraper.name)
             else:
                 print(survey)
 
 
-def verify_handler(args, scrapers):
-    """Verify the survey against the scrape cache."""
+def verify_handler(args, scrapers, connection):
+    """Verify the database against the scrape cache."""
 
-    for name, scraper in scrapers.items():
+    for scraper in scrapers:
 
-        survey = RentSurvey(path='{0}.json'.format(scraper.cache_path))
-        survey.load()
+        logging.info('Reading %s listings from the database at %s...', scraper.name, args.database)
+        cursor = connection.execute('SELECT * FROM listings WHERE scraper=?', (scraper.name,))
+        survey = RentSurvey(listings=[dict(row) for row in cursor.fetchall()])
 
         logging.debug('Generating a survey from the cache at %s...', scraper.cache_path)
         cache_survey = scraper.cache_survey
 
-        if args.regenerate:
-            logging.info('Overwriting the survey at %s...', survey.path)
-            survey.listings = cache_survey.listings
-            survey.save()
-
-        logging.info('Verifying the %s survey...', name)
+        logging.info('Verifying the %s survey...', scraper.name)
         if survey != cache_survey:
             return 1
 
@@ -91,6 +151,11 @@ def cli(parser=None):
         '--cache', '-c',
         help='Specify the directory to store scrape caches in.',
         default=os.path.join(DIRECTORY, 'cache'),
+    )
+    parser.add_argument(
+        '--database',
+        help='Specify a SeaRents database.',
+        default=os.path.join(DIRECTORY, 'searents.db'),
     )
     parser.add_argument(
         '--log-file',
@@ -115,6 +180,12 @@ def cli(parser=None):
         help=fetch_handler.__doc__,
     )
     fetch_parser.set_defaults(func=fetch_handler)
+
+    regenerate_parser = subparsers.add_parser(
+        'regenerate',
+        help=regenerate_handler.__doc__,
+    )
+    regenerate_parser.set_defaults(func=regenerate_handler)
 
     show_parser = subparsers.add_parser(
         'show',
@@ -142,12 +213,6 @@ def cli(parser=None):
         'verify',
         help=verify_handler.__doc__,
     )
-    verify_parser.add_argument(
-        '--regenerate',
-        help='Use the scrape cache to regenerate the survey.',
-        default=False,
-        action='store_true',
-    )
     verify_parser.set_defaults(func=verify_handler)
 
     return parser
@@ -160,6 +225,7 @@ def main(args=None):
         args = cli().parse_args()
 
     os.makedirs(DIRECTORY, exist_ok=True)
+    connection = database_connection(args.database)
 
     log_level = getattr(logging, args.log_level.upper(), None)
     if not isinstance(log_level, int):
@@ -172,147 +238,179 @@ def main(args=None):
     )
 
     # pylint: disable=line-too-long
-    scrapers = {
-        '2300 Elliott': EquityScraper(
+    scrapers = [
+        EquityScraper(
+            name='2300 Elliott',
             url='http://www.equityapartments.com/seattle/belltown/2300-elliott-apartments',
             cache_path=os.path.join(args.cache, '2300_Elliott'),
         ),
-        'Alcyone': EquityScraper(
+        EquityScraper(
+            name='Alcyone',
             url='http://www.equityapartments.com/seattle/south-lake-union/alcyone-apartments',
             cache_path=os.path.join(args.cache, 'Alcyone'),
         ),
-        'Bellevue Meadows': EquityScraper(
+        EquityScraper(
+            name='Bellevue Meadows',
             url='http://www.equityapartments.com/seattle/redmond/bellevue-meadows-apartments',
             cache_path=os.path.join(args.cache, 'Bellevue_Meadows'),
         ),
-        'Centennial Tower and Court': EquityScraper(
+        EquityScraper(
+            name='Centennial Tower and Court',
             url='http://www.equityapartments.com/seattle/belltown/centennial-tower-and-court-apartments',
             cache_path=os.path.join(args.cache, 'Centennial_Tower_and_Court'),
         ),
-        'Chelsea Square': EquityScraper(
+        EquityScraper(
+            name='Chelsea Square',
             url='http://www.equityapartments.com/seattle/downtown-redmond/chelsea-square-apartments',
             cache_path=os.path.join(args.cache, 'Chelsea_Square'),
         ),
-        'City Square Bellevue': EquityScraper(
+        EquityScraper(
+            name='City Square Bellevue',
             url='http://www.equityapartments.com/seattle/downtown-bellevue/city-square-bellevue-apartments',
             cache_path=os.path.join(args.cache, 'City_Square_Bellevue'),
         ),
-        'Harbor Steps': EquityScraper(
+        EquityScraper(
+            name='Harbor Steps',
             url='http://www.equityapartments.com/seattle/downtown-seattle/harbor-steps-apartments',
             cache_path=os.path.join(args.cache, 'Harbor_Steps'),
         ),
-        'Heritage Ridge': EquityScraper(
+        EquityScraper(
+            name='Heritage Ridge',
             url='http://www.equityapartments.com/seattle/lynnwood/heritage-ridge-apartments',
             cache_path=os.path.join(args.cache, 'Heritage_Ridge'),
         ),
-        'Harrison Square': EquityScraper(
+        EquityScraper(
+            name='Harrison Square',
             url='http://www.equityapartments.com/seattle/lower-queen-anne/harrison-square-apartments',
             cache_path=os.path.join(args.cache, 'Harrison_Square'),
         ),
-        'Ivorywood': EquityScraper(
+        EquityScraper(
+            name='Ivorywood',
             url='http://www.equityapartments.com/seattle/bothell/ivorywood-apartments',
             cache_path=os.path.join(args.cache, 'Ivorywood'),
         ),
-        'Junction 47': EquityScraper(
+        EquityScraper(
+            name='Junction 47',
             url='http://www.equityapartments.com/seattle/west-seattle/junction-47-apartments',
             cache_path=os.path.join(args.cache, 'Junction_47'),
         ),
-        'Metro on First': EquityScraper(
+        EquityScraper(
+            name='Metro on First',
             url='http://www.equityapartments.com/seattle/lower-queen-anne/metro-on-first-apartments',
             cache_path=os.path.join(args.cache, 'Metro_on_First'),
         ),
-        'Moda': EquityScraper(
+        EquityScraper(
+            name='Moda',
             url='http://www.equityapartments.com/seattle/belltown/moda-apartments',
             cache_path=os.path.join(args.cache, 'Moda'),
         ),
-        'Monterra in Mill Creek': EquityScraper(
+        EquityScraper(
+            name='Monterra in Mill Creek',
             url='http://www.equityapartments.com/seattle/mill-creek/monterra-in-mill-creek-apartments',
             cache_path=os.path.join(args.cache, 'Monterra_in_Mill_Creek'),
         ),
-        'Odin': EquityScraper(
+        EquityScraper(
+            name='Odin',
             url='http://www.equityapartments.com/seattle/ballard/odin-apartments',
             cache_path=os.path.join(args.cache, 'Odin'),
         ),
-        'Old Town Lofts': EquityScraper(
+        EquityScraper(
+            name='Old Town Lofts',
             url='http://www.equityapartments.com/seattle/downtown-redmond/old-town-lofts-apartments',
             cache_path=os.path.join(args.cache, 'Old_Town_Lofts'),
         ),
-        'Olympus': EquityScraper(
+        EquityScraper(
+            name='Olympus',
             url='http://www.equityapartments.com/seattle/belltown/olympus-apartments',
             cache_path=os.path.join(args.cache, 'Olympus'),
         ),
-        'Packard Building': EquityScraper(
+        EquityScraper(
+            name='Packard Building',
             url='http://www.equityapartments.com/seattle/capitiol-hill/packard-building-apartments',
             cache_path=os.path.join(args.cache, 'Packard_Building'),
         ),
-        'Providence': EquityScraper(
+        EquityScraper(
+            name='Providence',
             url='http://www.equityapartments.com/seattle/bothell/providence-apartments',
             cache_path=os.path.join(args.cache, 'Providence'),
         ),
-        'Red160': EquityScraper(
+        EquityScraper(
+            name='Red160',
             url='http://www.equityapartments.com/seattle/downtown-redmond/red160-apartments',
             cache_path=os.path.join(args.cache, 'Red160'),
         ),
-        'Redmond Court': EquityScraper(
+        EquityScraper(
+            name='Redmond Court',
             url='http://www.equityapartments.com/seattle/redmond/redmond-court-apartments',
             cache_path=os.path.join(args.cache, 'Redmond_Court'),
         ),
-        'Rianna': EquityScraper(
+        EquityScraper(
+            name='Rianna',
             url='http://www.equityapartments.com/seattle/capitol-hill/rianna-apartments',
             cache_path=os.path.join(args.cache, 'Rianna'),
         ),
-        'Riverpark': EquityScraper(
+        EquityScraper(
+            name='Riverpark',
             url='http://www.equityapartments.com/seattle/downtown-redmond/riverpark-apartments',
             cache_path=os.path.join(args.cache, 'Riverpark'),
         ),
-        'Seventh and James': EquityScraper(
+        EquityScraper(
+            name='Seventh and James',
             url='http://www.equityapartments.com/seattle/first-hill/seventh-and-james-apartments',
             cache_path=os.path.join(args.cache, 'Seventh_and_James'),
         ),
-        'Square One': EquityScraper(
+        EquityScraper(
+            name='Square One',
             url='http://www.equityapartments.com/seattle/roosevelt/square-one-apartments',
             cache_path=os.path.join(args.cache, 'Square_One'),
         ),
-        'Surrey Downs': EquityScraper(
+        EquityScraper(
+            name='Surrey Downs',
             url='http://www.equityapartments.com/seattle/factoria/surrey-downs-apartments',
             cache_path=os.path.join(args.cache, 'Surrey_Downs'),
         ),
-        'The Heights on Capitol Hill': EquityScraper(
+        EquityScraper(
+            name='The Heights on Capitol Hill',
             url='http://www.equityapartments.com/seattle/capitol-hill/the-heights-on-capitol-hill-apartments',
             cache_path=os.path.join(args.cache, 'The_Heights_on_Capitol_Hill'),
         ),
-        'The Pearl': EquityScraper(
+        EquityScraper(
+            name='The Pearl',
             url='http://www.equityapartments.com/seattle/capitiol-hill/the-pearl-apartments-capitol-hill',
             cache_path=os.path.join(args.cache, 'The_Pearl'),
         ),
-        'The Reserve at Town Center': EquityScraper(
+        EquityScraper(
+            name='The Reserve at Town Center',
             url='http://www.equityapartments.com/seattle/mill-creek/the-reserve-at-town-center-apartments',
             cache_path=os.path.join(args.cache, 'The_Reserve_at_Town_Center'),
         ),
-        'Three20': EquityScraper(
+        EquityScraper(
+            name='Three20',
             url='http://www.equityapartments.com/seattle/capitol-hill/three20-apartments',
             cache_path=os.path.join(args.cache, 'Three20'),
         ),
-        'Urbana': EquityScraper(
+        EquityScraper(
+            name='Urbana',
             url='http://www.equityapartments.com/seattle/ballard/urbana-apartments',
             cache_path=os.path.join(args.cache, 'Urbana'),
         ),
-        'Uwajimaya Village': EquityScraper(
+        EquityScraper(
+            name='Uwajimaya Village',
             url='http://www.equityapartments.com/seattle/international-district/uwajimaya-village-apartments',
             cache_path=os.path.join(args.cache, 'Uwajimaya_Village'),
         ),
-        'Veloce': EquityScraper(
+        EquityScraper(
+            name='Veloce',
             url='http://www.equityapartments.com/seattle/downtown-redmond/veloce-apartments',
             cache_path=os.path.join(args.cache, 'Veloce'),
         ),
-    }
+    ]
     # pylint: enable=line-too-long
 
-    return args.func(
+    status = args.func(
         args,
-        {
-            name: scraper
-            for name, scraper in scrapers.items()
-            if re.search(args.scraper, name) is not None
-        },
+        [scraper for scraper in scrapers if re.search(args.scraper, scraper.name) is not None],
+        connection,
     )
+    connection.close()
+    return status

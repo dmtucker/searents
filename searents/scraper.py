@@ -25,6 +25,7 @@ class BaseScraper(object):
     """Base Class for Searents Scrapers"""
 
     encoding = 'utf-8'
+    datetime_format = '%Y%m%dT%H%M%SZ.%f'
 
     def __init__(self, cache_path=None):
         self.cache_path = cache_path
@@ -53,15 +54,14 @@ class BaseScraper(object):
         response.raise_for_status()
         path = None
         if self.cache_path is not None:
-            extension = mimetypes.guess_extension(
-                response.headers['content-type'].split(';')[0],
-                strict=False,
-            )
             path = os.path.join(
                 self.cache_path,
                 '{timestamp}{extension}'.format(
-                    timestamp=timestamp.strftime('%Y%m%dT%H%M%SZ.%f'),
-                    extension=extension or '',
+                    timestamp=timestamp.strftime(self.datetime_format),
+                    extension=mimetypes.guess_extension(
+                        response.headers['content-type'].split(';')[0],
+                        strict=False,
+                    ) or '',
                 ),
             )
             logging.info('Caching %s at %s...', response.request.url, path)
@@ -82,8 +82,11 @@ class BaseScraper(object):
             path = os.path.join(self.cache_path, filename)
             with open(path, 'r', encoding=self.encoding) as f:
                 text = f.read()
+            timestamp_str, microsecond_str = os.path.splitext(filename)[0].split('.')
             yield Scrape(
                 text=text,
-                timestamp=dateutil.parser.parse(os.path.splitext(filename)[0].split('.')[0]),
+                timestamp=dateutil.parser.parse(timestamp_str).replace(
+                    microsecond=int(microsecond_str),
+                ),
                 path=path,
             )
