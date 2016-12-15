@@ -14,9 +14,6 @@ from searents.survey import RentSurvey
 from searents.equity import EquityScraper
 
 
-DIRECTORY = os.path.join(os.environ.get('HOME', ''), '.searents')
-
-
 def database_connection(*args, **kwargs):
     """Create a connection to the database."""
     sqlite3.register_converter('TIMESTAMP', dateutil.parser.parse)
@@ -148,17 +145,22 @@ def cli(parser=None):
     parser.add_argument(
         '--cache', '-c',
         help='Specify the directory to store scrape caches in.',
-        default=os.path.join(DIRECTORY, 'cache'),
+        default=os.path.join('{directory}', 'cache'),
+    )
+    parser.add_argument(
+        '--directory',
+        help='Specify a directory to store a cache, database, and log in.',
+        default=os.path.join(os.environ.get('HOME', ''), '.searents'),
     )
     parser.add_argument(
         '--database',
         help='Specify a SeaRents database.',
-        default=os.path.join(DIRECTORY, 'searents.db'),
+        default=os.path.join('{directory}', 'searents.db'),
     )
     parser.add_argument(
         '--log-file',
         help='Specify the file to log to.',
-        default=os.path.join(DIRECTORY, 'searents.log'),
+        default=os.path.join('{directory}', 'searents.log'),
     )
     parser.add_argument(
         '--log-level',
@@ -222,7 +224,11 @@ def main(args=None):
     if args is None:
         args = cli().parse_args()
 
-    os.makedirs(DIRECTORY, exist_ok=True)
+    os.makedirs(args.directory, exist_ok=True)
+    args.cache = args.cache.format(directory=args.directory)
+    args.database = args.database.format(directory=args.directory)
+    args.log_file = args.log_file.format(directory=args.directory)
+
     connection = database_connection(args.database)
 
     log_level = getattr(logging, args.log_level.upper(), None)
