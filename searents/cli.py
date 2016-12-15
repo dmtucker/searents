@@ -16,8 +16,8 @@ from searents.equity import EquityScraper
 
 def database_connection(*args, **kwargs):
     """Create a connection to the database."""
-    sqlite3.register_converter('TIMESTAMP', dateutil.parser.parse)
     kwargs['detect_types'] = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES
+    sqlite3.register_converter('TIMESTAMP', dateutil.parser.parse)
     connection = sqlite3.connect(*args, **kwargs)
     connection.row_factory = sqlite3.Row
     connection.execute(
