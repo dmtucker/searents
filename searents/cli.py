@@ -36,7 +36,7 @@ def fetch_handler(args, scrapers, connection):
 
     for scraper in scrapers:
 
-        logging.debug('Fetching new listings from %s...', scraper.name)
+        logging.info('Fetching new listings from %s...', scraper.name)
         survey = scraper.scrape_survey()
 
         logging.info('%d new listings were fetched.', len(survey.listings))
@@ -70,10 +70,10 @@ def regenerate_handler(args, scrapers, connection):
 
     for scraper in scrapers:
 
-        logging.debug('Generating a survey from the cache at %s...', scraper.cache_path)
+        logging.info('Generating a survey from the cache at %s...', scraper.cache_path)
         survey = scraper.cache_survey
 
-        logging.debug('Writing the %s survey to the database...', scraper.name)
+        logging.info('Writing the %s survey to the database...', scraper.name)
         connection.executemany(
             'INSERT INTO listings VALUES (?, ?, ?, ?, ?)',
             [
@@ -106,7 +106,7 @@ def show_handler(args, scrapers, connection):
         logging.debug('Sorting the %s survey...', scraper.name)
         survey.listings.sort(key=lambda listing: listing['timestamp'])
 
-        logging.debug('Filtering listings...')
+        logging.info('Filtering listings...')
         survey.listings = list(filter(
             lambda listing: len([
                 value for k, value in listing.items()
@@ -117,7 +117,7 @@ def show_handler(args, scrapers, connection):
         ))
 
         if len(survey.listings) > 0:
-            logging.debug('Showing the %s survey...', scraper.name)
+            logging.info('Showing the %s survey...', scraper.name)
             if args.graphical:
                 survey.visualize(scraper.name)
             else:
@@ -133,7 +133,7 @@ def verify_handler(args, scrapers, connection):
         cursor = connection.execute('SELECT * FROM listings WHERE scraper=?', (scraper.name,))
         survey = RentSurvey(listings=[dict(row) for row in cursor.fetchall()])
 
-        logging.debug('Generating a survey from the cache at %s...', scraper.cache_path)
+        logging.info('Generating a survey from the cache at %s...', scraper.cache_path)
         cache_survey = scraper.cache_survey
 
         logging.info('Verifying the %s survey...', scraper.name)
