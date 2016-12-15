@@ -103,18 +103,16 @@ def show_handler(args, scrapers, connection):
         cursor.execute('SELECT * FROM listings WHERE scraper=?', (scraper.name,))
         survey = RentSurvey(listings=[dict(row) for row in cursor.fetchall()])
 
-        logging.debug('Sorting the %s survey...', scraper.name)
-        survey.listings.sort(key=lambda listing: listing['timestamp'])
-
-        logging.info('Filtering listings...')
-        survey.listings = list(filter(
-            lambda listing: len([
-                value for k, value in listing.items()
-                if re.search(args.filter_key, str(k)) is not None and
+        logging.info('Filtering %s listings...', scraper.name)
+        survey.listings = [
+            listing
+            for listing in sorted(survey.listings, key=lambda _listing: _listing['timestamp'])
+            if any(
+                re.search(args.filter_key, str(key)) is not None and
                 re.search(args.filter, str(value)) is not None
-            ]) > 0,
-            survey.listings,
-        ))
+                for key, value in listing.items()
+            )
+        ]
 
         if len(survey.listings) > 0:
             logging.info('Showing the %s survey...', scraper.name)
