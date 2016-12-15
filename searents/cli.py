@@ -229,8 +229,6 @@ def main(args=None):
     args.database = args.database.format(directory=args.directory)
     args.log_file = args.log_file.format(directory=args.directory)
 
-    connection = database_connection(args.database)
-
     log_level = getattr(logging, args.log_level.upper(), None)
     if not isinstance(log_level, int):
         raise ValueError('Invalid log level: %s' % args.log_level)
@@ -411,6 +409,7 @@ def main(args=None):
     ]
     # pylint: enable=line-too-long
 
+    connection = database_connection(args.database)
     status = args.func(
         args,
         [scraper for scraper in scrapers if re.search(args.scraper, scraper.name) is not None],
