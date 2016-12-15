@@ -14,13 +14,10 @@ from searents.survey import RentSurvey
 from searents.equity import EquityScraper
 
 
-DIRECTORY = os.path.join(os.environ.get('HOME', ''), '.searents')
-
-
 def database_connection(*args, **kwargs):
     """Create a connection to the database."""
-    sqlite3.register_converter('TIMESTAMP', dateutil.parser.parse)
     kwargs['detect_types'] = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES
+    sqlite3.register_converter('TIMESTAMP', dateutil.parser.parse)
     connection = sqlite3.connect(*args, **kwargs)
     connection.row_factory = sqlite3.Row
     connection.execute(
@@ -36,7 +33,7 @@ def fetch_handler(args, scrapers, connection):
 
     for scraper in scrapers:
 
-        logging.debug('Fetching new listings from %s...', scraper.name)
+        logging.info('Fetching new listings from %s...', scraper.name)
         survey = scraper.scrape_survey()
 
         logging.info('%d new listings were fetched.', len(survey.listings))
@@ -70,10 +67,10 @@ def regenerate_handler(args, scrapers, connection):
 
     for scraper in scrapers:
 
-        logging.debug('Generating a survey from the cache at %s...', scraper.cache_path)
+        logging.info('Generating a survey from the cache at %s...', scraper.cache_path)
         survey = scraper.cache_survey
 
-        logging.debug('Writing the %s survey to the database...', scraper.name)
+        logging.info('Writing the %s survey to the database...', scraper.name)
         connection.executemany(
             'INSERT INTO listings VALUES (?, ?, ?, ?, ?)',
             [
@@ -103,21 +100,19 @@ def show_handler(args, scrapers, connection):
         cursor.execute('SELECT * FROM listings WHERE scraper=?', (scraper.name,))
         survey = RentSurvey(listings=[dict(row) for row in cursor.fetchall()])
 
-        logging.debug('Sorting the %s survey...', scraper.name)
-        survey.listings.sort(key=lambda listing: listing['timestamp'])
-
-        logging.debug('Filtering listings...')
-        survey.listings = list(filter(
-            lambda listing: len([
-                value for k, value in listing.items()
-                if re.search(args.filter_key, str(k)) is not None and
+        logging.info('Filtering %s listings...', scraper.name)
+        survey.listings = [
+            listing
+            for listing in sorted(survey.listings, key=lambda _listing: _listing['timestamp'])
+            if any(
+                re.search(args.filter_key, str(key)) is not None and
                 re.search(args.filter, str(value)) is not None
-            ]) > 0,
-            survey.listings,
-        ))
+                for key, value in listing.items()
+            )
+        ]
 
         if len(survey.listings) > 0:
-            logging.debug('Showing the %s survey...', scraper.name)
+            logging.info('Showing the %s survey...', scraper.name)
             if args.graphical:
                 survey.visualize(scraper.name)
             else:
@@ -133,7 +128,7 @@ def verify_handler(args, scrapers, connection):
         cursor = connection.execute('SELECT * FROM listings WHERE scraper=?', (scraper.name,))
         survey = RentSurvey(listings=[dict(row) for row in cursor.fetchall()])
 
-        logging.debug('Generating a survey from the cache at %s...', scraper.cache_path)
+        logging.info('Generating a survey from the cache at %s...', scraper.cache_path)
         cache_survey = scraper.cache_survey
 
         logging.info('Verifying the %s survey...', scraper.name)
@@ -150,17 +145,22 @@ def cli(parser=None):
     parser.add_argument(
         '--cache', '-c',
         help='Specify the directory to store scrape caches in.',
-        default=os.path.join(DIRECTORY, 'cache'),
+        default=os.path.join('{directory}', 'cache'),
+    )
+    parser.add_argument(
+        '--directory',
+        help='Specify a directory to store a cache, database, and log in.',
+        default=os.path.join(os.environ.get('HOME', ''), '.searents'),
     )
     parser.add_argument(
         '--database',
         help='Specify a SeaRents database.',
-        default=os.path.join(DIRECTORY, 'searents.db'),
+        default=os.path.join('{directory}', 'searents.db'),
     )
     parser.add_argument(
         '--log-file',
         help='Specify the file to log to.',
-        default=os.path.join(DIRECTORY, 'searents.log'),
+        default=os.path.join('{directory}', 'searents.log'),
     )
     parser.add_argument(
         '--log-level',
@@ -224,8 +224,10 @@ def main(args=None):
     if args is None:
         args = cli().parse_args()
 
-    os.makedirs(DIRECTORY, exist_ok=True)
-    connection = database_connection(args.database)
+    os.makedirs(args.directory, exist_ok=True)
+    args.cache = args.cache.format(directory=args.directory)
+    args.database = args.database.format(directory=args.directory)
+    args.log_file = args.log_file.format(directory=args.directory)
 
     log_level = getattr(logging, args.log_level.upper(), None)
     if not isinstance(log_level, int):
@@ -407,6 +409,7 @@ def main(args=None):
     ]
     # pylint: enable=line-too-long
 
+    connection = database_connection(args.database)
     status = args.func(
         args,
         [scraper for scraper in scrapers if re.search(args.scraper, scraper.name) is not None],
