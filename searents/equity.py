@@ -32,7 +32,7 @@ class EquityParser(HTMLParser):
 
     def handle_data(self, data):
         data = data.strip()
-        if len(data) > 0 and self._unit is not None:
+        if data and self._unit is not None:
             if self.get_starttag_text() == '<span class="pricing">':
                 self._unit['price'] = float(data.replace('$', '').replace(',', ''))
 
@@ -47,7 +47,7 @@ class EquityParser(HTMLParser):
                 'unit': unit.split(' ')[1],
             }
 
-    def error(self, *args, **kwargs):
+    def error(self, message):
         pass
 
     def reset(self):
