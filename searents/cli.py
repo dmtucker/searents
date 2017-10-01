@@ -111,7 +111,7 @@ def show_handler(args, scrapers, connection):
             )
         ]
 
-        if len(survey.listings) > 0:
+        if survey.listings:
             logging.info('Showing the %s survey...', scraper.name)
             if args.graphical:
                 survey.visualize(scraper.name)
@@ -140,7 +140,7 @@ def cli(parser=None):
     """Parse CLI arguments and options."""
 
     if parser is None:
-        parser = argparse.ArgumentParser()
+        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument(
         '--cache', '-c',
