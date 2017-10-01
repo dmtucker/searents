@@ -40,6 +40,7 @@ setup(
         'GNU Lesser General Public License v2 or later (LGPLv2+)',
         'Intended Audience :: End Users/Desktop',
         'Programming Language :: Python :: 3',
-        'Development Status :: 3 - Alpha',
+        'Programming Language :: Python :: 3.5',
+        'Development Status :: 4 - Beta',
     ],
 )
