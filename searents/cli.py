@@ -37,7 +37,8 @@ def fetch_handler(args, scrapers, connection):
         survey = scraper.scrape_survey()
 
         logging.info('%d new listings were fetched.', len(survey.listings))
-        print(survey)
+        if survey.listings:
+            print(survey)
 
         logging.info('Writing the new listings to the database at %s...', args.database)
         connection.executemany(
