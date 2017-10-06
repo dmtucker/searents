@@ -51,6 +51,27 @@ class RentSurvey(object):
             ),
         ])
 
+    def episodes(self, threshold=datetime.timedelta(weeks=1)):
+        """
+        Generate lists of listings related by url (==), unit (==), and
+        timestamp (within a threshold of the previous listing).
+        """
+        for url in {listing['url'] for listing in self.listings}:
+            url_listings = [listing for listing in self.listings if listing['url'] == url]
+            for unit in sorted({listing['unit'] for listing in url_listings}):
+                unit_listings = sorted(
+                    (listing for listing in url_listings if listing['unit'] == unit),
+                    key=lambda listing: listing['timestamp'],
+                )
+                iterator = iter(unit_listings)
+                episode = [next(iterator)]
+                for listing in iterator:
+                    if listing['timestamp'] - episode[-1]['timestamp'] > threshold:
+                        yield episode
+                        episode = []
+                    episode.append(listing)
+                yield episode
+
     def is_valid(self):
         """Verify all contained listings are well-formed."""
         for listing in self.listings:
@@ -66,32 +87,61 @@ class RentSurvey(object):
                 return False
         return True
 
+    def unit_episodes(self, *args, **kwargs):
+        """Generate tuples consisting of a unit and its episodes, respectively."""
+        iterator = iter(self.episodes(*args, **kwargs))
+        episodes = [next(iterator)]
+        unit = episodes[-1][-1]['unit']
+        for episode in iterator:
+            if episode[-1]['unit'] != unit:
+                yield unit, episodes
+                unit, episodes = episode[-1]['unit'], []
+            episodes.append(episode)
+        yield unit, episodes
+
+    def url_episodes(self, *args, **kwargs):
+        """
+        Generate tuples consisting of a url and a list
+        of its units and their episodes, respectively.
+        """
+        iterator = iter(self.unit_episodes(*args, **kwargs))
+        unit_episodes = [next(iterator)]
+        url = unit_episodes[-1][-1][-1][-1]['url']
+        for unit, episodes in iterator:
+            if episodes[-1][-1]['url'] != url:
+                yield url, unit_episodes
+                url, unit_episodes = episodes[-1][-1]['url'], []
+            unit_episodes.append((unit, episodes))
+        yield url, unit_episodes
+
     def visualize(self, name=None):
         """Plot listings."""
-        urls = set([listing['url'] for listing in self.listings])
-        url_colors = iter(cm.rainbow(numpy.linspace(0, 1, len(urls))))  # pylint: disable=no-member
-        for url in urls:
-            url_listings = [listing for listing in self.listings if listing['url'] == url]
+        if not self.listings:
+            return
+        urls = {listing['url'] for listing in self.listings}
+        distinct_units = len({listing['url'] + listing['unit'] for listing in self.listings})
+        # pylint: disable=no-member
+        url_colors = iter(cm.rainbow(numpy.linspace(0, 1, len(urls))))
+        unit_colors = iter(cm.rainbow(numpy.linspace(0, 1, distinct_units)))
+        # pylint: enable=no-member
+        for _, unit_episodes in self.url_episodes():
             url_color = next(url_colors)
-            units = set([listing['unit'] for listing in url_listings])
-            unit_colors =\
-                iter(cm.rainbow(numpy.linspace(0, 1, len(units))))  # pylint: disable=no-member
-            for unit in sorted(units):
-                unit_listings = [listing for listing in url_listings if listing['unit'] == unit]
+            for unit, episodes in unit_episodes:
                 unit_color = next(unit_colors)
-                pyplot.plot_date(
-                    matplotlib.dates.date2num([listing['timestamp'] for listing in unit_listings]),
-                    [listing['price'] for listing in unit_listings],
-                    'b-',
-                    c=unit_color if len(urls) < 2 else url_color,
-                    label=unit,
-                    linewidth=2,
-                )
-                pyplot.text(
-                    matplotlib.dates.date2num([unit_listings[-1]['timestamp']]),
-                    unit_listings[-1]['price'],
-                    '{0} ({1})'.format(unit, unit_listings[-1]['price']),
-                )
+                for episode in episodes:
+                    pyplot.plot_date(
+                        matplotlib.dates.date2num([listing['timestamp'] for listing in episode]),
+                        [listing['price'] for listing in episode],
+                        'b-',
+                        color=url_color if len(urls) > 1 else unit_color,
+                        label=unit,
+                        linewidth=2,
+                    )
+                    pyplot.text(
+                        matplotlib.dates.date2num([episode[-1]['timestamp']]),
+                        episode[-1]['price'],
+                        '{0} ({1})'.format(unit, episode[-1]['price']),
+                    )
         if name is not None:
             pyplot.gcf().canvas.set_window_title(name)
         pyplot.title('Apartment Prices Over Time')
@@ -100,5 +150,4 @@ class RentSurvey(object):
         pyplot.grid(b=True, which='major', color='k', linestyle='-')
         pyplot.grid(b=True, which='minor', color='k', linestyle=':')
         pyplot.minorticks_on()
-        pyplot.legend(loc='upper left', fontsize='xx-small')
         pyplot.show()

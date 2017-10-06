@@ -37,7 +37,8 @@ def fetch_handler(args, scrapers, connection):
         survey = scraper.scrape_survey()
 
         logging.info('%d new listings were fetched.', len(survey.listings))
-        print(survey)
+        if survey.listings:
+            print(survey)
 
         logging.info('Writing the new listings to the database at %s...', args.database)
         connection.executemany(
@@ -242,74 +243,274 @@ def main(args=None):
     # pylint: disable=line-too-long
     scrapers = [
         EquityScraper(
-            name='2300 Elliott',
-            url='http://www.equityapartments.com/seattle/belltown/2300-elliott-apartments',
-            cache_path=os.path.join(args.cache, '2300_Elliott'),
+            name='One Henry Adams',
+            url='http://www.equityapartments.com/san-francisco/design-district/one-henry-adams-apartments',
+            cache_path=os.path.join(args.cache, 'One_Henry_Adams'),
         ),
         EquityScraper(
-            name='Alcyone',
-            url='http://www.equityapartments.com/seattle/south-lake-union/alcyone-apartments',
-            cache_path=os.path.join(args.cache, 'Alcyone'),
+            name='Potrero 1010',
+            url='http://www.equityapartments.com/san-francisco/potrero-hill/potrero-1010-apartments',
+            cache_path=os.path.join(args.cache, 'Potrero_1010'),
         ),
         EquityScraper(
-            name='Bellevue Meadows',
-            url='http://www.equityapartments.com/seattle/redmond/bellevue-meadows-apartments',
-            cache_path=os.path.join(args.cache, 'Bellevue_Meadows'),
+            name='340 Fremont',
+            url='http://www.equityapartments.com/san-francisco/rincon-hill/340-fremont-apartments',
+            cache_path=os.path.join(args.cache, '340_Fremont'),
         ),
         EquityScraper(
-            name='Centennial Tower and Court',
-            url='http://www.equityapartments.com/seattle/belltown/centennial-tower-and-court-apartments',
-            cache_path=os.path.join(args.cache, 'Centennial_Tower_and_Court'),
+            name='855 Brannan',
+            url='http://www.equityapartments.com/san-francisco/soma/855-brannan-apartments',
+            cache_path=os.path.join(args.cache, '855_Brannan'),
         ),
         EquityScraper(
-            name='Chelsea Square',
-            url='http://www.equityapartments.com/seattle/downtown-redmond/chelsea-square-apartments',
-            cache_path=os.path.join(args.cache, 'Chelsea_Square'),
+            name='Acton Courtyard',
+            url='http://www.equityapartments.com/san-francisco-bay/berkeley/berkeley-apartments-acton-courtyard',
+            cache_path=os.path.join(args.cache, 'Acton_Courtyard'),
         ),
         EquityScraper(
-            name='City Square Bellevue',
-            url='http://www.equityapartments.com/seattle/downtown-bellevue/city-square-bellevue-apartments',
-            cache_path=os.path.join(args.cache, 'City_Square_Bellevue'),
+            name='ARTech',
+            url='http://www.equityapartments.com/san-francisco-bay/berkeley/berkeley-apartments-artech',
+            cache_path=os.path.join(args.cache, 'ARTech'),
         ),
         EquityScraper(
-            name='Harbor Steps',
-            url='http://www.equityapartments.com/seattle/downtown-seattle/harbor-steps-apartments',
-            cache_path=os.path.join(args.cache, 'Harbor_Steps'),
+            name='Berkeleyan',
+            url='http://www.equityapartments.com/san-francisco-bay/berkeley/berkeley-apartments-berkeleyan',
+            cache_path=os.path.join(args.cache, 'Berkeleyan'),
         ),
         EquityScraper(
-            name='Heritage Ridge',
-            url='http://www.equityapartments.com/seattle/lynnwood/heritage-ridge-apartments',
-            cache_path=os.path.join(args.cache, 'Heritage_Ridge'),
+            name='Fine Arts',
+            url='http://www.equityapartments.com/san-francisco-bay/berkeley/berkeley-apartments-fine-arts',
+            cache_path=os.path.join(args.cache, 'Fine_Arts'),
         ),
         EquityScraper(
-            name='Harrison Square',
-            url='http://www.equityapartments.com/seattle/lower-queen-anne/harrison-square-apartments',
-            cache_path=os.path.join(args.cache, 'Harrison_Square'),
+            name='Gaia',
+            url='http://www.equityapartments.com/san-francisco-bay/berkeley/berkeley-apartments-gaia',
+            cache_path=os.path.join(args.cache, 'Gaia'),
         ),
         EquityScraper(
-            name='Ivorywood',
-            url='http://www.equityapartments.com/seattle/bothell/ivorywood-apartments',
-            cache_path=os.path.join(args.cache, 'Ivorywood'),
+            name='Renaissance Villas',
+            url='http://www.equityapartments.com/san-francisco-bay/berkeley/berkeley-apartments-renaissance-villas',
+            cache_path=os.path.join(args.cache, 'Renaissance_Villas'),
         ),
         EquityScraper(
-            name='Junction 47',
-            url='http://www.equityapartments.com/seattle/west-seattle/junction-47-apartments',
-            cache_path=os.path.join(args.cache, 'Junction_47'),
+            name='Touriel',
+            url='http://www.equityapartments.com/san-francisco-bay/berkeley/berkeley-apartments-touriel',
+            cache_path=os.path.join(args.cache, 'Touriel'),
         ),
         EquityScraper(
-            name='Metro on First',
-            url='http://www.equityapartments.com/seattle/lower-queen-anne/metro-on-first-apartments',
-            cache_path=os.path.join(args.cache, 'Metro_on_First'),
+            name='Northpark',
+            url='http://www.equityapartments.com/san-francisco-bay/burlingame/northpark-apartments',
+            cache_path=os.path.join(args.cache, 'Northpark'),
         ),
         EquityScraper(
-            name='Moda',
-            url='http://www.equityapartments.com/seattle/belltown/moda-apartments',
-            cache_path=os.path.join(args.cache, 'Moda'),
+            name='Skyline Terrace',
+            url='http://www.equityapartments.com/san-francisco-bay/burlingame/skyline-terrace-apartments',
+            cache_path=os.path.join(args.cache, 'Skyline_Terrace'),
         ),
         EquityScraper(
-            name='Monterra in Mill Creek',
-            url='http://www.equityapartments.com/seattle/mill-creek/monterra-in-mill-creek-apartments',
-            cache_path=os.path.join(args.cache, 'Monterra_in_Mill_Creek'),
+            name='Woodleaf',
+            url='http://www.equityapartments.com/san-francisco-bay/campbell/woodleaf-apartments',
+            cache_path=os.path.join(args.cache, 'Woodleaf'),
+        ),
+        EquityScraper(
+            name='La Terrazza',
+            url='http://www.equityapartments.com/san-francisco-bay/colma/la-terrazza-apartments',
+            cache_path=os.path.join(args.cache, 'La_Terrazza'),
+        ),
+        EquityScraper(
+            name='City Gate at Cupertino',
+            url='http://www.equityapartments.com/san-francisco-bay/cupertino/city-gate-at-cupertino-apartments',
+            cache_path=os.path.join(args.cache, 'City_Gate_at_Cupertino'),
+        ),
+        EquityScraper(
+            name='88 Hillside',
+            url='http://www.equityapartments.com/san-francisco-bay/daly-city/88-hillside-apartments',
+            cache_path=os.path.join(args.cache, '88_Hillside'),
+        ),
+        EquityScraper(
+            name='Geary Courtyard',
+            url='http://www.equityapartments.com/san-francisco-bay/downtown-san-francisco/geary-courtyard-apartments',
+            cache_path=os.path.join(args.cache, 'Geary_Courtyard'),
+        ),
+        EquityScraper(
+            name='Fountains at Emerald Park',
+            url='http://www.equityapartments.com/san-francisco-bay/dublin/fountains-at-emerald-park-apartments',
+            cache_path=os.path.join(args.cache, 'Fountains_at_Emerald_Park'),
+        ),
+        EquityScraper(
+            name='Artistry Emeryville',
+            url='http://www.equityapartments.com/san-francisco-bay/emeryville/artistry-emeryville-apartments',
+            cache_path=os.path.join(args.cache, 'Artistry_Emeryville'),
+        ),
+        EquityScraper(
+            name='Parc on Powell',
+            url='http://www.equityapartments.com/san-francisco-bay/emeryville/parc-on-powell-apartments',
+            cache_path=os.path.join(args.cache, 'Parc_on_Powell'),
+        ),
+        EquityScraper(
+            name='Lantern Cove',
+            url='http://www.equityapartments.com/san-francisco-bay/foster-city/lantern-cove-apartments',
+            cache_path=os.path.join(args.cache, 'Lantern_Cove'),
+        ),
+        EquityScraper(
+            name='Schooner Bay Apartment Homes',
+            url='http://www.equityapartments.com/san-francisco-bay/foster-city/schooner-bay-apartment-homes',
+            cache_path=os.path.join(args.cache, 'Schooner_Bay_Apartment_Homes'),
+        ),
+        EquityScraper(
+            name='Alborada',
+            url='http://www.equityapartments.com/san-francisco-bay/fremont/alborada-apartments',
+            cache_path=os.path.join(args.cache, 'Alborada'),
+        ),
+        EquityScraper(
+            name='Archstone Fremont Center',
+            url='http://www.equityapartments.com/san-francisco-bay/fremont/archstone-fremont-center-apartments',
+            cache_path=os.path.join(args.cache, 'Archstone_Fremont_Center'),
+        ),
+        EquityScraper(
+            name='The Terraces',
+            url='http://www.equityapartments.com/san-francisco-bay/lower-nob-hill/the-terraces-apartments',
+            cache_path=os.path.join(args.cache, 'The_Terraces'),
+        ),
+        EquityScraper(
+            name='Mill Creek',
+            url='http://www.equityapartments.com/san-francisco-bay/milpitas/mill-creek-apartments',
+            cache_path=os.path.join(args.cache, 'Mill_Creek'),
+        ),
+        EquityScraper(
+            name='Azure',
+            url='http://www.equityapartments.com/san-francisco-bay/mission-bay/azure-apartments',
+            cache_path=os.path.join(args.cache, 'Azure'),
+        ),
+        EquityScraper(
+            name='Reserve at Mountain View',
+            url='http://www.equityapartments.com/san-francisco-bay/mountain-view/reserve-at-mountain-view-apartments',
+            cache_path=os.path.join(args.cache, 'Reserve_at_Mountain_View'),
+        ),
+        EquityScraper(
+            name='Domain',
+            url='http://www.equityapartments.com/san-francisco-bay/north-san-jose/domain-apartments',
+            cache_path=os.path.join(args.cache, 'Domain'),
+        ),
+        EquityScraper(
+            name='Vista 99',
+            url='http://www.equityapartments.com/san-francisco-bay/north-san-jose/vista-99-apartments',
+            cache_path=os.path.join(args.cache, 'Vista_99'),
+        ),
+        EquityScraper(
+            name='Southwood',
+            url='http://www.equityapartments.com/san-francisco-bay/palo-alto/southwood-apartments',
+            cache_path=os.path.join(args.cache, 'Southwood'),
+        ),
+        EquityScraper(
+            name='Northridge',
+            url='http://www.equityapartments.com/san-francisco-bay/pleasant-hill/northridge-apartments',
+            cache_path=os.path.join(args.cache, 'Northridge'),
+        ),
+        EquityScraper(
+            name='Wood Creek',
+            url='http://www.equityapartments.com/san-francisco-bay/pleasant-hill/wood-creek-ca-apartments',
+            cache_path=os.path.join(args.cache, 'Wood_Creek'),
+        ),
+        EquityScraper(
+            name='Park Hacienda',
+            url='http://www.equityapartments.com/san-francisco-bay/pleasanton/park-hacienda-apartments',
+            cache_path=os.path.join(args.cache, 'Park_Hacienda'),
+        ),
+        EquityScraper(
+            name='Avenue Two',
+            url='http://www.equityapartments.com/san-francisco-bay/redwood-city/avenue-two-apartments',
+            cache_path=os.path.join(args.cache, 'Avenue_Two'),
+        ),
+        EquityScraper(
+            name='Riva Terra Apartments at Redwood Shores',
+            url='http://www.equityapartments.com/san-francisco-bay/redwood-city/riva-terra-apartments-at-redwood-shores',
+            cache_path=os.path.join(args.cache, 'Riva_Terra_Apartments_at_Redwood_Shores'),
+        ),
+        EquityScraper(
+            name='Verde',
+            url='http://www.equityapartments.com/san-francisco-bay/san-jose/verde-apartments',
+            cache_path=os.path.join(args.cache, 'Verde'),
+        ),
+        EquityScraper(
+            name='55 West Fifth',
+            url='http://www.equityapartments.com/san-francisco-bay/san-mateo/55-west-fifth-apartments',
+            cache_path=os.path.join(args.cache, '55_West_Fifth'),
+        ),
+        EquityScraper(
+            name='Creekside',
+            url='http://www.equityapartments.com/san-francisco-bay/san-mateo/creekside-apartments',
+            cache_path=os.path.join(args.cache, 'Creekside'),
+        ),
+        EquityScraper(
+            name='Park Place at San Mateo',
+            url='http://www.equityapartments.com/san-francisco-bay/san-mateo/park-place-at-san-mateo-apartments',
+            cache_path=os.path.join(args.cache, 'Park_Place_at_San_Mateo'),
+        ),
+        EquityScraper(
+            name='Canyon Creek',
+            url='http://www.equityapartments.com/san-francisco-bay/san-ramon/canyon-creek-ca-apartments',
+            cache_path=os.path.join(args.cache, 'Canyon_Creek'),
+        ),
+        EquityScraper(
+            name='Estancia at Santa Clara',
+            url='http://www.equityapartments.com/san-francisco-bay/santa-clara/estancia-at-santa-clara-apartments',
+            cache_path=os.path.join(args.cache, 'Estancia_at_Santa_Clara'),
+        ),
+        EquityScraper(
+            name='Laguna Clara',
+            url='http://www.equityapartments.com/san-francisco-bay/santa-clara/laguna-clara-apartments',
+            cache_path=os.path.join(args.cache, 'Laguna_Clara'),
+        ),
+        EquityScraper(
+            name='Summit at Sausalito',
+            url='http://www.equityapartments.com/san-francisco-bay/sausalito/summit-at-sausalito-apartments',
+            cache_path=os.path.join(args.cache, 'Summit_at_Sausalito'),
+        ),
+        EquityScraper(
+            name='77 Bluxome',
+            url='http://www.equityapartments.com/san-francisco-bay/soma/77-bluxome-apartments',
+            cache_path=os.path.join(args.cache, '77_Bluxome'),
+        ),
+        EquityScraper(
+            name='SoMa Square',
+            url='http://www.equityapartments.com/san-francisco-bay/soma/soma-square-apartments',
+            cache_path=os.path.join(args.cache, 'SoMa_Square'),
+        ),
+        EquityScraper(
+            name='South City Station',
+            url='http://www.equityapartments.com/san-francisco-bay/south-san-francisco/south-city-station-apartments',
+            cache_path=os.path.join(args.cache, 'South_City_Station'),
+        ),
+        EquityScraper(
+            name='Arbor Terrace',
+            url='http://www.equityapartments.com/san-francisco-bay/sunnyvale/arbor-terrace-apartments',
+            cache_path=os.path.join(args.cache, 'Arbor_Terrace'),
+        ),
+        EquityScraper(
+            name='Briarwood',
+            url='http://www.equityapartments.com/san-francisco-bay/sunnyvale/briarwood-apartments',
+            cache_path=os.path.join(args.cache, 'Briarwood'),
+        ),
+        EquityScraper(
+            name='The Arches',
+            url='http://www.equityapartments.com/san-francisco-bay/sunnyvale/the-arches-apartments',
+            cache_path=os.path.join(args.cache, 'The_Arches'),
+        ),
+        EquityScraper(
+            name='Parkside',
+            url='http://www.equityapartments.com/san-francisco-bay/union-city/parkside-apartments',
+            cache_path=os.path.join(args.cache, 'Parkside'),
+        ),
+        EquityScraper(
+            name='Skylark',
+            url='http://www.equityapartments.com/san-francisco-bay/union-city/skylark-apartments',
+            cache_path=os.path.join(args.cache, 'Skylark'),
+        ),
+        EquityScraper(
+            name='Springline',
+            url='http://www.equityapartments.com/seattle/admiral-district/springline-apartments',
+            cache_path=os.path.join(args.cache, 'Springline'),
         ),
         EquityScraper(
             name='Odin',
@@ -317,9 +518,24 @@ def main(args=None):
             cache_path=os.path.join(args.cache, 'Odin'),
         ),
         EquityScraper(
-            name='Old Town Lofts',
-            url='http://www.equityapartments.com/seattle/downtown-redmond/old-town-lofts-apartments',
-            cache_path=os.path.join(args.cache, 'Old_Town_Lofts'),
+            name='Urbana',
+            url='http://www.equityapartments.com/seattle/ballard/urbana-apartments',
+            cache_path=os.path.join(args.cache, 'Urbana'),
+        ),
+        EquityScraper(
+            name='2300 Elliott',
+            url='http://www.equityapartments.com/seattle/belltown/2300-elliott-apartments',
+            cache_path=os.path.join(args.cache, '2300_Elliott'),
+        ),
+        EquityScraper(
+            name='Centennial Tower and Court',
+            url='http://www.equityapartments.com/seattle/belltown/centennial-tower-and-court-apartments',
+            cache_path=os.path.join(args.cache, 'Centennial_Tower_and_Court'),
+        ),
+        EquityScraper(
+            name='Moda',
+            url='http://www.equityapartments.com/seattle/belltown/moda-apartments',
+            cache_path=os.path.join(args.cache, 'Moda'),
         ),
         EquityScraper(
             name='Olympus',
@@ -327,9 +543,9 @@ def main(args=None):
             cache_path=os.path.join(args.cache, 'Olympus'),
         ),
         EquityScraper(
-            name='Packard Building',
-            url='http://www.equityapartments.com/seattle/capitiol-hill/packard-building-apartments',
-            cache_path=os.path.join(args.cache, 'Packard_Building'),
+            name='Ivorywood',
+            url='http://www.equityapartments.com/seattle/bothell/ivorywood-apartments',
+            cache_path=os.path.join(args.cache, 'Ivorywood'),
         ),
         EquityScraper(
             name='Providence',
@@ -337,44 +553,9 @@ def main(args=None):
             cache_path=os.path.join(args.cache, 'Providence'),
         ),
         EquityScraper(
-            name='Red160',
-            url='http://www.equityapartments.com/seattle/downtown-redmond/red160-apartments',
-            cache_path=os.path.join(args.cache, 'Red160'),
-        ),
-        EquityScraper(
-            name='Redmond Court',
-            url='http://www.equityapartments.com/seattle/redmond/redmond-court-apartments',
-            cache_path=os.path.join(args.cache, 'Redmond_Court'),
-        ),
-        EquityScraper(
-            name='Rianna',
-            url='http://www.equityapartments.com/seattle/capitol-hill/rianna-apartments',
-            cache_path=os.path.join(args.cache, 'Rianna'),
-        ),
-        EquityScraper(
-            name='Riverpark',
-            url='http://www.equityapartments.com/seattle/downtown-redmond/riverpark-apartments',
-            cache_path=os.path.join(args.cache, 'Riverpark'),
-        ),
-        EquityScraper(
-            name='Seventh and James',
-            url='http://www.equityapartments.com/seattle/first-hill/seventh-and-james-apartments',
-            cache_path=os.path.join(args.cache, 'Seventh_and_James'),
-        ),
-        EquityScraper(
-            name='Square One',
-            url='http://www.equityapartments.com/seattle/roosevelt/square-one-apartments',
-            cache_path=os.path.join(args.cache, 'Square_One'),
-        ),
-        EquityScraper(
-            name='Surrey Downs',
-            url='http://www.equityapartments.com/seattle/factoria/surrey-downs-apartments',
-            cache_path=os.path.join(args.cache, 'Surrey_Downs'),
-        ),
-        EquityScraper(
-            name='The Heights on Capitol Hill',
-            url='http://www.equityapartments.com/seattle/capitol-hill/the-heights-on-capitol-hill-apartments',
-            cache_path=os.path.join(args.cache, 'The_Heights_on_Capitol_Hill'),
+            name='Packard Building',
+            url='http://www.equityapartments.com/seattle/capitiol-hill/packard-building-apartments',
+            cache_path=os.path.join(args.cache, 'Packard_Building'),
         ),
         EquityScraper(
             name='The Pearl',
@@ -382,9 +563,14 @@ def main(args=None):
             cache_path=os.path.join(args.cache, 'The_Pearl'),
         ),
         EquityScraper(
-            name='The Reserve at Town Center',
-            url='http://www.equityapartments.com/seattle/mill-creek/the-reserve-at-town-center-apartments',
-            cache_path=os.path.join(args.cache, 'The_Reserve_at_Town_Center'),
+            name='Rianna',
+            url='http://www.equityapartments.com/seattle/capitol-hill/rianna-apartments',
+            cache_path=os.path.join(args.cache, 'Rianna'),
+        ),
+        EquityScraper(
+            name='The Heights on Capitol Hill',
+            url='http://www.equityapartments.com/seattle/capitol-hill/the-heights-on-capitol-hill-apartments',
+            cache_path=os.path.join(args.cache, 'The_Heights_on_Capitol_Hill'),
         ),
         EquityScraper(
             name='Three20',
@@ -392,9 +578,59 @@ def main(args=None):
             cache_path=os.path.join(args.cache, 'Three20'),
         ),
         EquityScraper(
-            name='Urbana',
-            url='http://www.equityapartments.com/seattle/ballard/urbana-apartments',
-            cache_path=os.path.join(args.cache, 'Urbana'),
+            name='City Square Bellevue',
+            url='http://www.equityapartments.com/seattle/downtown-bellevue/city-square-bellevue-apartments',
+            cache_path=os.path.join(args.cache, 'City_Square_Bellevue'),
+        ),
+        EquityScraper(
+            name='Venn at Main',
+            url='http://www.equityapartments.com/seattle/downtown-bellevue/venn-at-main-apartments',
+            cache_path=os.path.join(args.cache, 'Venn_at_Main'),
+        ),
+        EquityScraper(
+            name='Chelsea Square',
+            url='http://www.equityapartments.com/seattle/downtown-redmond/chelsea-square-apartments',
+            cache_path=os.path.join(args.cache, 'Chelsea_Square'),
+        ),
+        EquityScraper(
+            name='Old Town Lofts',
+            url='http://www.equityapartments.com/seattle/downtown-redmond/old-town-lofts-apartments',
+            cache_path=os.path.join(args.cache, 'Old_Town_Lofts'),
+        ),
+        EquityScraper(
+            name='Red160',
+            url='http://www.equityapartments.com/seattle/downtown-redmond/red160-apartments',
+            cache_path=os.path.join(args.cache, 'Red160'),
+        ),
+        EquityScraper(
+            name='Riverpark',
+            url='http://www.equityapartments.com/seattle/downtown-redmond/riverpark-apartments',
+            cache_path=os.path.join(args.cache, 'Riverpark'),
+        ),
+        EquityScraper(
+            name='Veloce',
+            url='http://www.equityapartments.com/seattle/downtown-redmond/veloce-apartments',
+            cache_path=os.path.join(args.cache, 'Veloce'),
+        ),
+        EquityScraper(
+            name='Harbor Steps',
+            url='http://www.equityapartments.com/seattle/downtown-seattle/harbor-steps-apartments',
+            cache_path=os.path.join(args.cache, 'Harbor_Steps'),
+        ),
+        EquityScraper(
+            name='Helios',
+            url='http://www.equityapartments.com/seattle/downtown-seattle/helios-apartments',
+            cache_path=os.path.join(args.cache, 'Helios'),
+        ),
+        EquityScraper(
+            name='Surrey Downs',
+            url='http://www.equityapartments.com/seattle/factoria/surrey-downs-apartments',
+            cache_path=os.path.join(args.cache, 'Surrey_Downs'),
+        ),
+        EquityScraper(
+            name='Seventh and James',
+            url='http://www.equityapartments.com/seattle/first-hill/seventh-and-james-apartments',
+            cache_path=os.path.join(args.cache, 'Seventh_and_James'),
         ),
         EquityScraper(
             name='Uwajimaya Village',
@@ -402,9 +638,59 @@ def main(args=None):
             cache_path=os.path.join(args.cache, 'Uwajimaya_Village'),
         ),
         EquityScraper(
-            name='Veloce',
-            url='http://www.equityapartments.com/seattle/downtown-redmond/veloce-apartments',
-            cache_path=os.path.join(args.cache, 'Veloce'),
+            name='Harrison Square',
+            url='http://www.equityapartments.com/seattle/lower-queen-anne/harrison-square-apartments',
+            cache_path=os.path.join(args.cache, 'Harrison_Square'),
+        ),
+        EquityScraper(
+            name='Metro on First',
+            url='http://www.equityapartments.com/seattle/lower-queen-anne/metro-on-first-apartments',
+            cache_path=os.path.join(args.cache, 'Metro_on_First'),
+        ),
+        EquityScraper(
+            name='Heritage Ridge',
+            url='http://www.equityapartments.com/seattle/lynnwood/heritage-ridge-apartments',
+            cache_path=os.path.join(args.cache, 'Heritage_Ridge'),
+        ),
+        EquityScraper(
+            name='Monterra in Mill Creek',
+            url='http://www.equityapartments.com/seattle/mill-creek/monterra-in-mill-creek-apartments',
+            cache_path=os.path.join(args.cache, 'Monterra_in_Mill_Creek'),
+        ),
+        EquityScraper(
+            name='The Reserve at Town Center',
+            url='http://www.equityapartments.com/seattle/mill-creek/the-reserve-at-town-center-apartments',
+            cache_path=os.path.join(args.cache, 'The_Reserve_at_Town_Center'),
+        ),
+        EquityScraper(
+            name='Bellevue Meadows',
+            url='http://www.equityapartments.com/seattle/redmond/bellevue-meadows-apartments',
+            cache_path=os.path.join(args.cache, 'Bellevue_Meadows'),
+        ),
+        EquityScraper(
+            name='Redmond Court',
+            url='http://www.equityapartments.com/seattle/redmond/redmond-court-apartments',
+            cache_path=os.path.join(args.cache, 'Redmond_Court'),
+        ),
+        EquityScraper(
+            name='Square One',
+            url='http://www.equityapartments.com/seattle/roosevelt/square-one-apartments',
+            cache_path=os.path.join(args.cache, 'Square_One'),
+        ),
+        EquityScraper(
+            name='Alcyone',
+            url='http://www.equityapartments.com/seattle/south-lake-union/alcyone-apartments',
+            cache_path=os.path.join(args.cache, 'Alcyone'),
+        ),
+        EquityScraper(
+            name='Cascade',
+            url='http://www.equityapartments.com/seattle/south-lake-union/cascade-apartments',
+            cache_path=os.path.join(args.cache, 'Cascade'),
+        ),
+        EquityScraper(
+            name='Junction 47',
+            url='http://www.equityapartments.com/seattle/west-seattle/junction-47-apartments',
+            cache_path=os.path.join(args.cache, 'Junction_47'),
         ),
     ]
     # pylint: enable=line-too-long
