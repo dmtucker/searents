@@ -257,6 +257,11 @@ def main(args=None):
             cache_path=os.path.join(args.cache, 'Bellevue_Meadows'),
         ),
         EquityScraper(
+            name='Cascade',
+            url='http://www.equityapartments.com/seattle/south-lake-union/cascade-apartments',
+            cache_path=os.path.join(args.cache, 'Cascade'),
+        ),
+        EquityScraper(
             name='Centennial Tower and Court',
             url='http://www.equityapartments.com/seattle/belltown/centennial-tower-and-court-apartments',
             cache_path=os.path.join(args.cache, 'Centennial_Tower_and_Court'),
@@ -270,6 +275,11 @@ def main(args=None):
             name='City Square Bellevue',
             url='http://www.equityapartments.com/seattle/downtown-bellevue/city-square-bellevue-apartments',
             cache_path=os.path.join(args.cache, 'City_Square_Bellevue'),
+        ),
+        EquityScraper(
+            name='Helios',
+            url='http://www.equityapartments.com/seattle/downtown-seattle/helios-apartments',
+            cache_path=os.path.join(args.cache, 'Helios'),
         ),
         EquityScraper(
             name='Harbor Steps',
@@ -362,6 +372,11 @@ def main(args=None):
             cache_path=os.path.join(args.cache, 'Seventh_and_James'),
         ),
         EquityScraper(
+            name='Springline',
+            url='http://www.equityapartments.com/seattle/admiral-district/springline-apartments',
+            cache_path=os.path.join(args.cache, 'Springline'),
+        ),
+        EquityScraper(
             name='Square One',
             url='http://www.equityapartments.com/seattle/roosevelt/square-one-apartments',
             cache_path=os.path.join(args.cache, 'Square_One'),
@@ -405,6 +420,11 @@ def main(args=None):
             name='Veloce',
             url='http://www.equityapartments.com/seattle/downtown-redmond/veloce-apartments',
             cache_path=os.path.join(args.cache, 'Veloce'),
+        ),
+        EquityScraper(
+            name='Venn at Main',
+            url='http://www.equityapartments.com/seattle/downtown-bellevue/venn-at-main-apartments',
+            cache_path=os.path.join(args.cache, 'Venn_at_Main'),
         ),
     ]
     # pylint: enable=line-too-long
