@@ -38,18 +38,19 @@ class RentSurvey(object):
         ])
 
     def __eq__(self, survey):
-        return all([
-            hasattr(survey, 'listings'),
-            len(self.listings) == len(survey.listings),
-            all(
-                survey_listing[key] == self_listing[key]
-                for self_listing, survey_listing in zip(
-                    sorted(self.listings, key=lambda listing: listing['timestamp']),
-                    sorted(survey.listings, key=lambda listing: listing['timestamp']),
-                )
-                for key in ['price', 'scraper', 'timestamp', 'unit', 'url']
-            ),
-        ])
+        try:
+            if len(self.listings) != len(survey.listings):
+                return False
+        except (AttributeError, TypeError):
+            return False
+        return all(
+            survey_listing[key] == self_listing[key]
+            for self_listing, survey_listing in zip(
+                sorted(self.listings, key=lambda listing: listing['timestamp']),
+                sorted(survey.listings, key=lambda listing: listing['timestamp']),
+            )
+            for key in ['price', 'scraper', 'timestamp', 'unit', 'url']
+        )
 
     def episodes(self, threshold=datetime.timedelta(weeks=1)):
         """
