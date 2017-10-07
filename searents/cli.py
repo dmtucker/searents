@@ -93,31 +93,26 @@ def regenerate_handler(args, scrapers, connection):
 
 def show_handler(args, scrapers, connection):
     """Show listings."""
-
+    survey = RentSurvey()
     for scraper in scrapers:
-
         logging.info('Reading %s listings from the database at %s...', scraper.name, args.database)
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM listings WHERE scraper=?', (scraper.name,))
-        survey = RentSurvey(listings=[dict(row) for row in cursor.fetchall()])
-
-        logging.info('Filtering %s listings...', scraper.name)
-        survey.listings = [
+        survey.listings.extend(
             listing
-            for listing in sorted(survey.listings, key=lambda _listing: _listing['timestamp'])
+            for listing in (dict(row) for row in cursor.fetchall())
             if any(
                 re.search(args.filter_key, str(key)) is not None and
                 re.search(args.filter, str(value)) is not None
                 for key, value in listing.items()
             )
-        ]
-
-        if survey.listings:
-            logging.info('Showing the %s survey...', scraper.name)
-            if args.graphical:
-                survey.visualize(scraper.name)
-            else:
-                print(survey)
+        )
+    if survey.listings:
+        logging.info('Showing %s listings...', len(survey.listings))
+        if args.graphical:
+            survey.visualize(', '.join(scraper.name for scraper in scrapers))
+        else:
+            print(survey)
 
 
 def verify_handler(args, scrapers, connection):
