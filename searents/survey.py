@@ -74,18 +74,16 @@ class RentSurvey(object):
 
     def is_valid(self):
         """Verify all contained listings are well-formed."""
-        for listing in self.listings:
-            if not isinstance(listing['price'], float):
-                return False
-            if not isinstance(listing['scraper'], str):
-                return False
-            if not isinstance(listing['timestamp'], datetime.datetime):
-                return False
-            if not isinstance(listing['unit'], str):
-                return False
-            if not isinstance(listing['url'], str):
-                return False
-        return True
+        return all(
+            all([
+                isinstance(listing['price'], float),
+                isinstance(listing['scraper'], str),
+                isinstance(listing['timestamp'], datetime.datetime),
+                isinstance(listing['unit'], str),
+                isinstance(listing['url'], str),
+            ])
+            for listing in self.listings
+        )
 
     def unit_episodes(self, *args, **kwargs):
         """Generate tuples consisting of a unit and its episodes, respectively."""
