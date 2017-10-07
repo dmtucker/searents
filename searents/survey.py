@@ -10,18 +10,15 @@ import numpy
 
 class RentSurvey(object):
 
-    """
-    A Collection of Listings
+    """A Collection of Listings"""
 
-    Listings are dicts of the following form:
-    {
+    listing_types = {
         'price': float,
         'scraper': str,
         'timestamp': datetime.datetime,
         'unit': str,
         'url': str,
     }
-    """
 
     def __init__(self, listings=None):
         self.listings = [] if listings is None else listings
@@ -37,19 +34,18 @@ class RentSurvey(object):
             for listing in self.listings
         ])
 
-    def __eq__(self, survey):
+    def __eq__(self, other):
         try:
-            if len(self.listings) != len(survey.listings):
+            if len(self.listings) != len(other.listings):
                 return False
         except (AttributeError, TypeError):
             return False
         return all(
-            survey_listing[key] == self_listing[key]
-            for self_listing, survey_listing in zip(
+            all(self_listing[key] == other_listing[key] for key in self.listing_types)
+            for self_listing, other_listing in zip(
                 sorted(self.listings, key=lambda listing: listing['timestamp']),
-                sorted(survey.listings, key=lambda listing: listing['timestamp']),
+                sorted(other.listings, key=lambda listing: listing['timestamp']),
             )
-            for key in ['price', 'scraper', 'timestamp', 'unit', 'url']
         )
 
     def episodes(self, threshold=datetime.timedelta(weeks=1)):
@@ -76,13 +72,7 @@ class RentSurvey(object):
     def is_valid(self):
         """Verify all contained listings are well-formed."""
         return all(
-            all([
-                isinstance(listing['price'], float),
-                isinstance(listing['scraper'], str),
-                isinstance(listing['timestamp'], datetime.datetime),
-                isinstance(listing['unit'], str),
-                isinstance(listing['url'], str),
-            ])
+            all(isinstance(listing[key], type_) for key, type_ in self.listing_types.items())
             for listing in self.listings
         )
 
