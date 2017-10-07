@@ -10,18 +10,15 @@ import numpy
 
 class RentSurvey(object):
 
-    """
-    A Collection of Listings
+    """A Collection of Listings"""
 
-    Listings are dicts of the following form:
-    {
+    listing_types = {
         'price': float,
         'scraper': str,
         'timestamp': datetime.datetime,
         'unit': str,
         'url': str,
     }
-    """
 
     def __init__(self, listings=None):
         self.listings = [] if listings is None else listings
@@ -37,19 +34,19 @@ class RentSurvey(object):
             for listing in self.listings
         ])
 
-    def __eq__(self, survey):
-        return all([
-            hasattr(survey, 'listings'),
-            len(self.listings) == len(survey.listings),
-            all(
-                survey_listing[key] == self_listing[key]
-                for self_listing, survey_listing in zip(
-                    sorted(self.listings, key=lambda listing: listing['timestamp']),
-                    sorted(survey.listings, key=lambda listing: listing['timestamp']),
-                )
-                for key in ['price', 'scraper', 'timestamp', 'unit', 'url']
-            ),
-        ])
+    def __eq__(self, other):
+        try:
+            if len(self.listings) != len(other.listings):
+                return False
+        except (AttributeError, TypeError):
+            return False
+        return all(
+            all(self_listing[key] == other_listing[key] for key in self.listing_types)
+            for self_listing, other_listing in zip(
+                sorted(self.listings, key=lambda listing: listing['timestamp']),
+                sorted(other.listings, key=lambda listing: listing['timestamp']),
+            )
+        )
 
     def episodes(self, threshold=datetime.timedelta(weeks=1)):
         """
@@ -74,18 +71,10 @@ class RentSurvey(object):
 
     def is_valid(self):
         """Verify all contained listings are well-formed."""
-        for listing in self.listings:
-            if not isinstance(listing['price'], float):
-                return False
-            if not isinstance(listing['scraper'], str):
-                return False
-            if not isinstance(listing['timestamp'], datetime.datetime):
-                return False
-            if not isinstance(listing['unit'], str):
-                return False
-            if not isinstance(listing['url'], str):
-                return False
-        return True
+        return all(
+            all(isinstance(listing[key], type_) for key, type_ in self.listing_types.items())
+            for listing in self.listings
+        )
 
     def unit_episodes(self, *args, **kwargs):
         """Generate tuples consisting of a unit and its episodes, respectively."""
@@ -124,19 +113,22 @@ class RentSurvey(object):
         url_colors = iter(cm.rainbow(numpy.linspace(0, 1, len(urls))))
         unit_colors = iter(cm.rainbow(numpy.linspace(0, 1, distinct_units)))
         # pylint: enable=no-member
+        labelled = set()
         for _, unit_episodes in self.url_episodes():
             url_color = next(url_colors)
             for unit, episodes in unit_episodes:
                 unit_color = next(unit_colors)
                 for episode in episodes:
+                    label = episode[-1]['scraper'] if len(urls) > 1 else unit
                     pyplot.plot_date(
                         matplotlib.dates.date2num([listing['timestamp'] for listing in episode]),
                         [listing['price'] for listing in episode],
                         'b-',
                         color=url_color if len(urls) > 1 else unit_color,
-                        label=unit,
+                        label=label if label not in labelled else '',
                         linewidth=2,
                     )
+                    labelled.add(label)
                     pyplot.text(
                         matplotlib.dates.date2num([episode[-1]['timestamp']]),
                         episode[-1]['price'],
@@ -150,4 +142,6 @@ class RentSurvey(object):
         pyplot.grid(b=True, which='major', color='k', linestyle='-')
         pyplot.grid(b=True, which='minor', color='k', linestyle=':')
         pyplot.minorticks_on()
+        if len(urls) > 1:
+            pyplot.legend(loc='upper left')
         pyplot.show()
