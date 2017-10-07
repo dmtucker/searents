@@ -40,21 +40,21 @@ def fetch_handler(args, scrapers, connection):
         if survey.listings:
             print(survey)
 
-        logging.info('Writing the new listings to the database at %s...', args.database)
-        connection.executemany(
-            'INSERT INTO listings VALUES (?, ?, ?, ?, ?)',
-            [
-                (
-                    listing['timestamp'],
-                    listing['url'],
-                    scraper.name,
-                    listing['unit'],
-                    listing['price'],
-                )
-                for listing in survey.listings
-            ],
-        )
-        connection.commit()
+            logging.info('Writing the new listings to the database at %s...', args.database)
+            connection.executemany(
+                'INSERT INTO listings VALUES (?, ?, ?, ?, ?)',
+                [
+                    (
+                        listing['timestamp'],
+                        listing['url'],
+                        scraper.name,
+                        listing['unit'],
+                        listing['price'],
+                    )
+                    for listing in survey.listings
+                ],
+            )
+            connection.commit()
 
 
 def regenerate_handler(args, scrapers, connection):
