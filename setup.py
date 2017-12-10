@@ -27,6 +27,7 @@ setup(
     url='https://gitlab.com/dmtucker/searents',
     packages=find_packages(),
     include_package_data=True,
+    python_requires='~=3.5',
     install_requires=REQUIREMENTS,
     entry_points={
         'console_scripts': [
