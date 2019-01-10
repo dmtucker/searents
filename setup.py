@@ -27,7 +27,7 @@ setup(
     python_requires='~=3.5',
     install_requires=[
         'fake_useragent~=0.1.0',
-        'matplotlib~=1.5.1',
+        'matplotlib~=2.2.3',
         'python-dateutil~=2.6.0',
         'requests~=2.9.1',
     ],
