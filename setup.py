@@ -13,9 +13,6 @@ from setuptools import setup, find_packages
 with open('README.rst') as readme_file:
     README = readme_file.read()
 
-with open('requirements.txt') as requirements_file:
-    REQUIREMENTS = requirements_file.read().splitlines()
-
 setup(
     name='searents',
     version='0.12.3',
@@ -28,7 +25,12 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     python_requires='~=3.5',
-    install_requires=REQUIREMENTS,
+    install_requires=[
+        'fake_useragent~=0.1.0',
+        'matplotlib~=1.5.1',
+        'python-dateutil~=2.6.0',
+        'requests~=2.9.1',
+    ],
     entry_points={
         'console_scripts': [
             'searents = searents.cli:main',
