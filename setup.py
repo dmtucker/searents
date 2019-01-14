@@ -13,12 +13,9 @@ from setuptools import setup, find_packages
 with open('README.rst') as readme_file:
     README = readme_file.read()
 
-with open('requirements.txt') as requirements_file:
-    REQUIREMENTS = requirements_file.read().splitlines()
-
 setup(
     name='searents',
-    version='0.12.3',
+    version='0.12.4',
     description='A Scraper of Seattle Rents',
     long_description=README,
     author='David Tucker',
@@ -28,7 +25,12 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     python_requires='~=3.5',
-    install_requires=REQUIREMENTS,
+    install_requires=[
+        'fake_useragent~=0.1.0',
+        'matplotlib~=2.2.3',
+        'python-dateutil~=2.6.0',
+        'requests~=2.9.1',
+    ],
     entry_points={
         'console_scripts': [
             'searents = searents.cli:main',
