@@ -15,7 +15,7 @@ with open('README.rst') as readme_file:
 
 setup(
     name='searents',
-    version='0.13.0',
+    version='0.13.1',
     description='A Scraper of Seattle Rents',
     long_description=README,
     author='David Tucker',
