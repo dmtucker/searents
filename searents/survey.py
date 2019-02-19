@@ -8,7 +8,7 @@ try:
     from matplotlib.pyplot import cm
     import numpy
 except ImportError:
-    def _visualize(self, *args, **kwargs):
+    def _visualize(self, name=None):
         raise NotImplementedError('The visualizer dependencies are not installed.')
 else:
     def _visualize(self, name=None):
