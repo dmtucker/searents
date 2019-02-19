@@ -23,12 +23,6 @@ SeaRents can be run as a command-line utility.
 
     searents --help
 
-SeaRents can also be imported into other Python projects.
-
-.. code:: python
-
-    import searents
-
 License
 -------
 
