@@ -2,10 +2,57 @@
 
 import datetime
 
-import matplotlib
-from matplotlib import pyplot
-from matplotlib.pyplot import cm
-import numpy
+try:
+    import matplotlib
+    from matplotlib import pyplot
+    from matplotlib.pyplot import cm
+    import numpy
+except ImportError:
+    def _visualize(self, *args, **kwargs):
+        raise NotImplementedError('The visualizer dependencies are not installed.')
+else:
+    def _visualize(self, name=None):
+        """Plot listings."""
+        if not self.listings:
+            return
+        urls = {listing['url'] for listing in self.listings}
+        distinct_units = len({listing['url'] + listing['unit'] for listing in self.listings})
+        # pylint: disable=no-member
+        url_colors = iter(cm.rainbow(numpy.linspace(0, 1, len(urls))))
+        unit_colors = iter(cm.rainbow(numpy.linspace(0, 1, distinct_units)))
+        # pylint: enable=no-member
+        labelled = set()
+        for _, unit_episodes in self.url_episodes():
+            url_color = next(url_colors)
+            for unit, episodes in unit_episodes:
+                unit_color = next(unit_colors)
+                for episode in episodes:
+                    label = episode[-1]['scraper'] if len(urls) > 1 else unit
+                    pyplot.plot_date(
+                        matplotlib.dates.date2num([listing['timestamp'] for listing in episode]),
+                        [listing['price'] for listing in episode],
+                        'b-',
+                        color=url_color if len(urls) > 1 else unit_color,
+                        label=label if label not in labelled else '',
+                        linewidth=2,
+                    )
+                    labelled.add(label)
+                    pyplot.text(
+                        matplotlib.dates.date2num([episode[-1]['timestamp']]),
+                        episode[-1]['price'],
+                        '{0} ({1})'.format(unit, episode[-1]['price']),
+                    )
+        if name is not None:
+            pyplot.gcf().canvas.set_window_title(name)
+        pyplot.title('Apartment Prices Over Time')
+        pyplot.xlabel('Time')
+        pyplot.ylabel('Price')
+        pyplot.grid(b=True, which='major', color='k', linestyle='-')
+        pyplot.grid(b=True, which='minor', color='k', linestyle=':')
+        pyplot.minorticks_on()
+        if len(urls) > 1:
+            pyplot.legend(loc='upper left')
+        pyplot.show()
 
 
 class RentSurvey(object):
@@ -103,45 +150,4 @@ class RentSurvey(object):
             unit_episodes.append((unit, episodes))
         yield url, unit_episodes
 
-    def visualize(self, name=None):
-        """Plot listings."""
-        if not self.listings:
-            return
-        urls = {listing['url'] for listing in self.listings}
-        distinct_units = len({listing['url'] + listing['unit'] for listing in self.listings})
-        # pylint: disable=no-member
-        url_colors = iter(cm.rainbow(numpy.linspace(0, 1, len(urls))))
-        unit_colors = iter(cm.rainbow(numpy.linspace(0, 1, distinct_units)))
-        # pylint: enable=no-member
-        labelled = set()
-        for _, unit_episodes in self.url_episodes():
-            url_color = next(url_colors)
-            for unit, episodes in unit_episodes:
-                unit_color = next(unit_colors)
-                for episode in episodes:
-                    label = episode[-1]['scraper'] if len(urls) > 1 else unit
-                    pyplot.plot_date(
-                        matplotlib.dates.date2num([listing['timestamp'] for listing in episode]),
-                        [listing['price'] for listing in episode],
-                        'b-',
-                        color=url_color if len(urls) > 1 else unit_color,
-                        label=label if label not in labelled else '',
-                        linewidth=2,
-                    )
-                    labelled.add(label)
-                    pyplot.text(
-                        matplotlib.dates.date2num([episode[-1]['timestamp']]),
-                        episode[-1]['price'],
-                        '{0} ({1})'.format(unit, episode[-1]['price']),
-                    )
-        if name is not None:
-            pyplot.gcf().canvas.set_window_title(name)
-        pyplot.title('Apartment Prices Over Time')
-        pyplot.xlabel('Time')
-        pyplot.ylabel('Price')
-        pyplot.grid(b=True, which='major', color='k', linestyle='-')
-        pyplot.grid(b=True, which='minor', color='k', linestyle=':')
-        pyplot.minorticks_on()
-        if len(urls) > 1:
-            pyplot.legend(loc='upper left')
-        pyplot.show()
+    visualize = _visualize
