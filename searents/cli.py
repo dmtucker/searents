@@ -102,10 +102,10 @@ def show_handler(args, scrapers, connection):
             listing
             for listing in (dict(row) for row in cursor.fetchall())
             if any(
-                all(
+                all([
                     re.search(args.filter_key, str(key)) is not None,
                     re.search(args.filter, str(value)) is not None,
-                )
+                ])
                 for key, value in listing.items()
             )
         )
