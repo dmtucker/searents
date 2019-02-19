@@ -17,10 +17,8 @@ else:
             return
         urls = {listing['url'] for listing in self.listings}
         distinct_units = len({listing['url'] + listing['unit'] for listing in self.listings})
-        # pylint: disable=no-member
         url_colors = iter(cm.rainbow(numpy.linspace(0, 1, len(urls))))
         unit_colors = iter(cm.rainbow(numpy.linspace(0, 1, distinct_units)))
-        # pylint: enable=no-member
         labelled = set()
         for _, unit_episodes in self.url_episodes():
             url_color = next(url_colors)
@@ -55,7 +53,7 @@ else:
         pyplot.show()
 
 
-class RentSurvey(object):
+class RentSurvey:
 
     """A Collection of Listings"""
 
@@ -108,7 +106,10 @@ class RentSurvey(object):
                     key=lambda listing: listing['timestamp'],
                 )
                 iterator = iter(unit_listings)
-                episode = [next(iterator)]
+                try:
+                    episode = [next(iterator)]
+                except StopIteration:
+                    assert False, 'This should never happen!'
                 for listing in iterator:
                     if listing['timestamp'] - episode[-1]['timestamp'] > threshold:
                         yield episode
@@ -126,7 +127,10 @@ class RentSurvey(object):
     def unit_episodes(self, *args, **kwargs):
         """Generate tuples consisting of a unit and its episodes, respectively."""
         iterator = iter(self.episodes(*args, **kwargs))
-        episodes = [next(iterator)]
+        try:
+            episodes = [next(iterator)]
+        except StopIteration:
+            assert False, 'This should never happen!'
         unit = episodes[-1][-1]['unit']
         for episode in iterator:
             if episode[-1]['unit'] != unit:
@@ -141,7 +145,10 @@ class RentSurvey(object):
         of its units and their episodes, respectively.
         """
         iterator = iter(self.unit_episodes(*args, **kwargs))
-        unit_episodes = [next(iterator)]
+        try:
+            unit_episodes = [next(iterator)]
+        except StopIteration:
+            assert False, 'This should never happen!'
         url = unit_episodes[-1][-1][-1][-1]['url']
         for unit, episodes in iterator:
             if episodes[-1][-1]['url'] != url:

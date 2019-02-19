@@ -131,6 +131,8 @@ def verify_handler(args, scrapers, connection):
         if survey != cache_survey:
             return 1
 
+    return 0
+
 
 def cli(parser=None):
     """Parse CLI arguments and options."""
