@@ -1,6 +1,6 @@
 image: python:3.5
 test:
   script:
-    - pip install --upgrade pip
-    - pip install tox
+    - pip install --upgrade 'pip ~= 19.0.2'
+    - pip install --upgrade 'tox ~= 3.7.0'
     - tox
