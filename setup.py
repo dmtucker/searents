@@ -28,7 +28,7 @@ setup(
     install_requires=[
         'fake_useragent~=0.1.0',
         'python-dateutil~=2.6.0',
-        'requests~=2.9.1',
+        'requests~=2.20.0',
     ],
     extras_require={
         'visualizer': [
