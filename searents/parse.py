@@ -21,8 +21,8 @@ def main(args=None):
     """Execute CLI commands."""
     if args is None:
         args = cli().parse_args()
-    with open(args.path, 'r', encoding='utf-8') as f:
-        html = f.read()
+    with open(args.path, 'r', encoding='utf-8') as scrape_f:
+        html = scrape_f.read()
     parser = EquityParser()
     parser.feed(html)
     print(json.dumps(parser.units, indent=4))

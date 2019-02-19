@@ -102,8 +102,10 @@ def show_handler(args, scrapers, connection):
             listing
             for listing in (dict(row) for row in cursor.fetchall())
             if any(
-                re.search(args.filter_key, str(key)) is not None and
-                re.search(args.filter, str(value)) is not None
+                all(
+                    re.search(args.filter_key, str(key)) is not None,
+                    re.search(args.filter, str(value)) is not None,
+                )
                 for key, value in listing.items()
             )
         )
@@ -130,6 +132,8 @@ def verify_handler(args, scrapers, connection):
         logging.info('Verifying the %s survey...', scraper.name)
         if survey != cache_survey:
             return 1
+
+    return 0
 
 
 def cli(parser=None):

@@ -24,13 +24,17 @@ setup(
     url='https://gitlab.com/dmtucker/searents',
     packages=find_packages(),
     include_package_data=True,
-    python_requires='~=3.5',
+    python_requires='~=3.6',
     install_requires=[
         'fake_useragent~=0.1.0',
-        'matplotlib~=2.2.3',
         'python-dateutil~=2.6.0',
         'requests~=2.9.1',
     ],
+    extras_require={
+        'visualizer': [
+            'matplotlib~=2.2.3',
+        ],
+    },
     entry_points={
         'console_scripts': [
             'searents = searents.cli:main',
@@ -39,11 +43,8 @@ setup(
     },
     keywords='rent scraper',
     classifiers=[
-        'License :: OSI Approved :: '
-        'GNU Lesser General Public License v2 or later (LGPLv2+)',
+        'License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)',
         'Intended Audience :: End Users/Desktop',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Development Status :: 4 - Beta',
     ],
 )

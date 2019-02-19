@@ -2,6 +2,7 @@
 
 from html.parser import HTMLParser
 import logging
+from typing import Dict, List
 
 import fake_useragent
 
@@ -13,7 +14,7 @@ class EquityParser(HTMLParser):
 
     """Parse HTML from an Equity website."""
 
-    units = []
+    units: List[Dict] = []
     _unit = None
 
     def handle_startendtag(self, tag, attrs):
@@ -92,7 +93,7 @@ class EquityScraper(BaseScraper):
         survey = RentSurvey()
         for scrape in self.cached_scrapes:
             listings = self.survey(scrape).listings
-            if len(listings) < 1:
+            if not listings:
                 logging.warning('%s is empty.', scrape.path)
             survey.listings.extend(listings)
         assert survey.is_valid()

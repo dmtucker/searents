@@ -9,7 +9,7 @@ import dateutil.parser
 import requests
 
 
-class Scrape(object):  # pylint: disable=too-few-public-methods
+class Scrape:  # pylint: disable=too-few-public-methods
 
     """Scraped Data and Associated Metadata"""
 
@@ -20,7 +20,7 @@ class Scrape(object):  # pylint: disable=too-few-public-methods
         self.path = path
 
 
-class BaseScraper(object):
+class BaseScraper:
 
     """Base Class for Searents Scrapers"""
 
@@ -65,8 +65,8 @@ class BaseScraper(object):
                 ),
             )
             logging.info('Caching %s at %s...', response.request.url, path)
-            with open(path, 'w', encoding=self.encoding) as f:
-                f.write(response.text)
+            with open(path, 'w', encoding=self.encoding) as scrape_f:
+                scrape_f.write(response.text)
         return Scrape(
             text=response.text,
             timestamp=datetime.datetime.now(datetime.timezone.utc),
@@ -80,8 +80,8 @@ class BaseScraper(object):
         assert self.cache_path is not None
         for filename in os.listdir(self.cache_path):
             path = os.path.join(self.cache_path, filename)
-            with open(path, 'r', encoding=self.encoding) as f:
-                text = f.read()
+            with open(path, 'r', encoding=self.encoding) as scrape_f:
+                text = scrape_f.read()
             timestamp_str, microsecond_str = os.path.splitext(filename)[0].split('.')
             yield Scrape(
                 text=text,
