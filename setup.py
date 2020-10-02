@@ -24,15 +24,15 @@ setup(
     url='https://gitlab.com/dmtucker/searents',
     packages=find_packages(),
     include_package_data=True,
-    python_requires='~=3.6',
+    python_requires='>=3.6',
     install_requires=[
-        'fake_useragent~=0.1.0',
-        'python-dateutil~=2.6.0',
-        'requests~=2.20.0',
+        'fake_useragent>=0.1',
+        'python-dateutil>=2.6',
+        'requests>=2.20',
     ],
     extras_require={
         'visualizer': [
-            'matplotlib~=2.2.3',
+            'matplotlib>=2.2',
         ],
     },
     entry_points={
