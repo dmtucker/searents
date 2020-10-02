@@ -18,6 +18,7 @@ setup(
     use_scm_version=True,
     description='A Scraper of Seattle Rents',
     long_description=README,
+    long_description_content_type='text/x-rst',
     author='David Tucker',
     author_email='david@tucker.name',
     license='LGPLv2+',
