@@ -15,7 +15,7 @@ with open('README.rst') as readme_file:
 
 setup(
     name='searents',
-    version='0.13.1',
+    use_scm_version=True,
     description='A Scraper of Seattle Rents',
     long_description=README,
     author='David Tucker',
@@ -25,6 +25,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     python_requires='>=3.6',
+    setup_requires=['setuptools_scm >= 4.1'],
     install_requires=[
         'fake_useragent>=0.1',
         'python-dateutil>=2.6',
