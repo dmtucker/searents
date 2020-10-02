@@ -17,8 +17,8 @@ else:
             return
         urls = {listing['url'] for listing in self.listings}
         distinct_units = len({listing['url'] + listing['unit'] for listing in self.listings})
-        url_colors = iter(cm.rainbow(numpy.linspace(0, 1, len(urls))))
-        unit_colors = iter(cm.rainbow(numpy.linspace(0, 1, distinct_units)))
+        url_colors = iter(cm.rainbow(numpy.linspace(0, 1, len(urls))))  # pylint: disable=no-member
+        unit_colors = iter(cm.rainbow(numpy.linspace(0, 1, distinct_units)))  # pylint: disable=no-member
         labelled = set()
         for _, unit_episodes in self.url_episodes():
             url_color = next(url_colors)
