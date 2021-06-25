@@ -15,3 +15,7 @@ python37:
 python38:
   image: python:3.8
   script: tox -e py38,static,publish
+
+python39:
+  image: python:3.9
+  script: tox -e py39
