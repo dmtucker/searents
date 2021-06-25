@@ -20,13 +20,13 @@ class EquityParser(HTMLParser):
     def handle_startendtag(self, tag, attrs):
         if self._unit is not None:
             for attr in attrs:
-                if attr[0] == 'src':
-                    self._unit['floorplan'] = attr[1]
-                if attr[0] == 'alt':
-                    self._unit['description'] = attr[1]
+                if attr[0] == "src":
+                    self._unit["floorplan"] = attr[1]
+                if attr[0] == "alt":
+                    self._unit["description"] = attr[1]
 
     def handle_endtag(self, tag):
-        if tag == 'li' and self._unit is not None:
+        if tag == "li" and self._unit is not None:
             # End of Listing
             self.units.append(self._unit)
             self._unit = None
@@ -35,17 +35,17 @@ class EquityParser(HTMLParser):
         data = data.strip()
         if data and self._unit is not None:
             if self.get_starttag_text() == '<span class="pricing">':
-                self._unit['price'] = float(data.replace('$', '').replace(',', ''))
+                self._unit["price"] = float(data.replace("$", "").replace(",", ""))
 
     def handle_comment(self, data):
         data = data.strip()
-        if data.startswith('ledgerId'):
+        if data.startswith("ledgerId"):
             # Start of Listing
-            ledger, building, unit = data.split(', ')
+            ledger, building, unit = data.split(", ")
             self._unit = {
-                'ledger': ledger.split(' ')[1],
-                'building': building.split(' ')[1],
-                'unit': unit.split(' ')[1],
+                "ledger": ledger.split(" ")[1],
+                "building": building.split(" ")[1],
+                "unit": unit.split(" ")[1],
             }
 
     def error(self, message):
@@ -72,10 +72,10 @@ class EquityScraper(BaseScraper):
         parser.feed(scrape.text)
         survey = RentSurvey()
         for unit in parser.units:
-            unit['scraper'] = self.name
-            unit['timestamp'] = scrape.timestamp
-            unit['unit'] = ' '.join([unit['building'], unit['unit']])
-            unit['url'] = scrape.url or self.url
+            unit["scraper"] = self.name
+            unit["timestamp"] = scrape.timestamp
+            unit["unit"] = " ".join([unit["building"], unit["unit"]])
+            unit["url"] = scrape.url or self.url
             survey.listings.append(unit)
         assert survey.is_valid()
         return survey
@@ -83,7 +83,9 @@ class EquityScraper(BaseScraper):
     def scrape_survey(self):
         """Scrape a RentSurvey from an Equity website."""
         return self.survey(
-            self.scrape(self.url, headers={'User-Agent': fake_useragent.UserAgent().random})
+            self.scrape(
+                self.url, headers={"User-Agent": fake_useragent.UserAgent().random}
+            )
         )
 
     @property
@@ -94,7 +96,7 @@ class EquityScraper(BaseScraper):
         for scrape in self.cached_scrapes:
             listings = self.survey(scrape).listings
             if not listings:
-                logging.warning('%s is empty.', scrape.path)
+                logging.warning("%s is empty.", scrape.path)
             survey.listings.extend(listings)
         assert survey.is_valid()
         return survey
