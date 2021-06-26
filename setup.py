@@ -31,6 +31,7 @@ setup(
     install_requires=[
         "python-dateutil>=2.6",
         "requests>=2.20",
+        "setuptools>=57.0",
     ],
     extras_require={
         "visualizer": [
