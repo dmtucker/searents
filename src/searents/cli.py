@@ -10,6 +10,7 @@ import time
 
 import dateutil.parser
 
+import searents
 from searents.survey import RentSurvey
 from searents.equity import EquityScraper
 
@@ -187,6 +188,7 @@ def cli(parser=None):
         help="Specify a search pattern for scraper names.",
         default=".*",
     )
+    parser.add_argument("--version", action="version", version=searents.__version__)
 
     subparsers = parser.add_subparsers()
 
