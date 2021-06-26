@@ -7,15 +7,16 @@ import re
 import sqlite3
 import sys
 import time
+from typing import Any, List, Optional
 
 import dateutil.parser
 
 import searents
-from searents.survey import RentSurvey
+from searents.survey import RentListing, RentSurvey
 from searents.equity import EquityScraper
 
 
-def database_connection(*args, **kwargs):
+def database_connection(*args: Any, **kwargs: Any) -> sqlite3.Connection:
     """Create a connection to the database."""
     kwargs["detect_types"] = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES
     sqlite3.register_converter("TIMESTAMP", dateutil.parser.parse)
@@ -29,7 +30,11 @@ def database_connection(*args, **kwargs):
     return connection
 
 
-def fetch_handler(args, scrapers, connection):
+def fetch_handler(
+    args: argparse.Namespace,
+    scrapers: List[EquityScraper],
+    connection: sqlite3.Connection,
+) -> None:
     """Fetch new listings."""
     for scraper in scrapers:
 
@@ -48,11 +53,11 @@ def fetch_handler(args, scrapers, connection):
                 "INSERT INTO listings VALUES (?, ?, ?, ?, ?)",
                 [
                     (
-                        listing["timestamp"],
-                        listing["url"],
+                        listing.timestamp,
+                        listing.url,
                         scraper.name,
-                        listing["unit"],
-                        listing["price"],
+                        listing.unit,
+                        listing.price,
                     )
                     for listing in survey.listings
                 ],
@@ -60,7 +65,11 @@ def fetch_handler(args, scrapers, connection):
             connection.commit()
 
 
-def regenerate_handler(args, scrapers, connection):
+def regenerate_handler(
+    args: argparse.Namespace,
+    scrapers: List[EquityScraper],
+    connection: sqlite3.Connection,
+) -> None:
     """Create a database from the scrape cache."""
     logging.info("Recreating the database at %s...", args.database)
     connection.close()
@@ -78,11 +87,11 @@ def regenerate_handler(args, scrapers, connection):
             "INSERT INTO listings VALUES (?, ?, ?, ?, ?)",
             [
                 (
-                    listing["timestamp"],
-                    listing["url"],
+                    listing.timestamp,
+                    listing.url,
                     scraper.name,
-                    listing["unit"],
-                    listing["price"],
+                    listing.unit,
+                    listing.price,
                 )
                 for listing in survey.listings
             ],
@@ -93,7 +102,11 @@ def regenerate_handler(args, scrapers, connection):
     sys.exit()
 
 
-def show_handler(args, scrapers, connection):
+def show_handler(
+    args: argparse.Namespace,
+    scrapers: List[EquityScraper],
+    connection: sqlite3.Connection,
+) -> None:
     """Show listings."""
     survey = RentSurvey()
     for scraper in scrapers:
@@ -105,7 +118,7 @@ def show_handler(args, scrapers, connection):
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM listings WHERE scraper=?", (scraper.name,))
         survey.listings.extend(
-            listing
+            RentListing(**listing)
             for listing in (dict(row) for row in cursor.fetchall())
             if any(
                 all(
@@ -125,7 +138,11 @@ def show_handler(args, scrapers, connection):
             print(survey)
 
 
-def verify_handler(args, scrapers, connection):
+def verify_handler(
+    args: argparse.Namespace,
+    scrapers: List[EquityScraper],
+    connection: sqlite3.Connection,
+) -> int:
     """Verify the database against the scrape cache."""
     for scraper in scrapers:
 
@@ -138,7 +155,7 @@ def verify_handler(args, scrapers, connection):
             "SELECT * FROM listings WHERE scraper=?",
             (scraper.name,),
         )
-        survey = RentSurvey(listings=[dict(row) for row in cursor.fetchall()])
+        survey = RentSurvey(listings=[RentListing(**row) for row in cursor.fetchall()])
 
         logging.info("Generating a survey from the cache at %s...", scraper.cache_path)
         cache_survey = scraper.cache_survey
@@ -150,7 +167,7 @@ def verify_handler(args, scrapers, connection):
     return 0
 
 
-def cli(parser=None):
+def cli(parser: Optional[argparse.ArgumentParser] = None) -> argparse.ArgumentParser:
     """Parse CLI arguments and options."""
     if parser is None:
         parser = argparse.ArgumentParser(
@@ -238,7 +255,7 @@ def cli(parser=None):
     return parser
 
 
-def main(args=None):
+def main(args: Optional[argparse.Namespace] = None) -> int:
     """Execute CLI commands."""
     if args is None:
         args = cli().parse_args()
@@ -751,4 +768,4 @@ def main(args=None):
         connection,
     )
     connection.close()
-    return status
+    return int(status or 0)

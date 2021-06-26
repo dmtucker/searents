@@ -2,11 +2,14 @@
 
 import argparse
 import json
+from typing import Optional
 
 from searents.equity import EquityParser
 
 
-def cli(parser=None):
+def cli(
+    parser: Optional[argparse.ArgumentParser] = None,
+) -> argparse.ArgumentParser:
     """Parse CLI commands."""
     if parser is None:
         parser = argparse.ArgumentParser()
@@ -17,7 +20,7 @@ def cli(parser=None):
     return parser
 
 
-def main(args=None):
+def main(args: Optional[argparse.Namespace] = None) -> int:
     """Execute CLI commands."""
     if args is None:
         args = cli().parse_args()
