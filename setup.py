@@ -46,7 +46,8 @@ setup(
     },
     keywords="rent scraper",
     classifiers=[
-        "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
+        "License :: OSI Approved ::"
+        " GNU Lesser General Public License v2 or later (LGPLv2+)",
         "Intended Audience :: End Users/Desktop",
         "Development Status :: 4 - Beta",
     ],

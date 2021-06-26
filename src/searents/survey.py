@@ -21,15 +21,15 @@ else:
             return
         urls = {listing["url"] for listing in self.listings}
         distinct_units = len(
-            {listing["url"] + listing["unit"] for listing in self.listings}
+            {listing["url"] + listing["unit"] for listing in self.listings},
         )
         url_colors = iter(
-            cm.rainbow(numpy.linspace(0, 1, len(urls)))  # pylint: disable=no-member
+            cm.rainbow(numpy.linspace(0, 1, len(urls))),  # pylint: disable=no-member
         )
         unit_colors = iter(
             cm.rainbow(  # pylint: disable=no-member
-                numpy.linspace(0, 1, distinct_units)
-            )
+                numpy.linspace(0, 1, distinct_units),
+            ),
         )
         labelled = set()
         for _, unit_episodes in self.url_episodes():
@@ -40,7 +40,7 @@ else:
                     label = episode[-1]["scraper"] if len(urls) > 1 else unit
                     pyplot.plot_date(
                         matplotlib.dates.date2num(
-                            [listing["timestamp"] for listing in episode]
+                            [listing["timestamp"] for listing in episode],
                         ),
                         [listing["price"] for listing in episode],
                         "b-",
@@ -68,9 +68,9 @@ else:
 
 
 class RentSurvey:
-
     """A Collection of Listings"""
 
+    default_threshold = datetime.timedelta(weeks=1)
     listing_types = {
         "price": float,
         "scraper": str,
@@ -80,22 +80,23 @@ class RentSurvey:
     }
 
     def __init__(self, listings=None):
+        """Initialize listings."""
         self.listings = [] if listings is None else listings
 
     def __str__(self):
+        """String-ify collected listings."""
         return "\n".join(
-            [
-                "[{timestamp}] ${price:,.2f} {scraper} {unit}".format(
-                    price=listing["price"],
-                    scraper=listing["scraper"],
-                    timestamp=listing["timestamp"],
-                    unit=listing["unit"],
-                )
-                for listing in self.listings
-            ]
+            "[{timestamp}] ${price:,.2f} {scraper} {unit}".format(
+                price=listing["price"],
+                scraper=listing["scraper"],
+                timestamp=listing["timestamp"],
+                unit=listing["unit"],
+            )
+            for listing in self.listings
         )
 
     def __eq__(self, other):
+        """Check equality."""
         try:
             if len(self.listings) != len(other.listings):
                 return False
@@ -109,9 +110,11 @@ class RentSurvey:
             )
         )
 
-    def episodes(self, threshold=datetime.timedelta(weeks=1)):
+    def episodes(self, threshold=default_threshold):
         """
-        Generate lists of listings related by url (==), unit (==), and
+        Generate lists of related listings.
+
+        Related listings share url (==), unit (==), and
         timestamp (within a threshold of the previous listing).
         """
         for url in {listing["url"] for listing in self.listings}:
@@ -123,12 +126,8 @@ class RentSurvey:
                     (listing for listing in url_listings if listing["unit"] == unit),
                     key=lambda listing: listing["timestamp"],
                 )
-                iterator = iter(unit_listings)
-                try:
-                    episode = [next(iterator)]
-                except StopIteration:
-                    assert False, "This should never happen!"
-                for listing in iterator:
+                episode = unit_listings[0]
+                for listing in unit_listings[1:]:
                     if listing["timestamp"] - episode[-1]["timestamp"] > threshold:
                         yield episode
                         episode = []
@@ -150,8 +149,8 @@ class RentSurvey:
         iterator = iter(self.episodes(*args, **kwargs))
         try:
             episodes = [next(iterator)]
-        except StopIteration:
-            assert False, "This should never happen!"
+        except StopIteration as exc:
+            raise RuntimeError("This should never happen. (1)") from exc
         unit = episodes[-1][-1]["unit"]
         for episode in iterator:
             if episode[-1]["unit"] != unit:
@@ -162,14 +161,15 @@ class RentSurvey:
 
     def url_episodes(self, *args, **kwargs):
         """
-        Generate tuples consisting of a url and a list
-        of its units and their episodes, respectively.
+        Generate (url, unit_episodes) tuples.
+
+        unit_episodes is a list of units and their episodes, respectively.
         """
         iterator = iter(self.unit_episodes(*args, **kwargs))
         try:
             unit_episodes = [next(iterator)]
-        except StopIteration:
-            assert False, "This should never happen!"
+        except StopIteration as exc:
+            raise RuntimeError("This should never happen. (2)") from exc
         url = unit_episodes[-1][-1][-1][-1]["url"]
         for unit, episodes in iterator:
             if episodes[-1][-1]["url"] != url:

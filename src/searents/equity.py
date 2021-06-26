@@ -11,13 +11,13 @@ from searents.survey import RentSurvey
 
 
 class EquityParser(HTMLParser):
-
     """Parse HTML from an Equity website."""
 
     units: List[Dict] = []
     _unit = None
 
     def handle_startendtag(self, tag, attrs):
+        """Parse the floorplan and description."""
         if self._unit is not None:
             for attr in attrs:
                 if attr[0] == "src":
@@ -26,21 +26,22 @@ class EquityParser(HTMLParser):
                     self._unit["description"] = attr[1]
 
     def handle_endtag(self, tag):
+        """Detect the end of the listing."""
         if tag == "li" and self._unit is not None:
-            # End of Listing
             self.units.append(self._unit)
             self._unit = None
 
     def handle_data(self, data):
+        """Parse the price."""
         data = data.strip()
         if data and self._unit is not None:
             if self.get_starttag_text() == '<span class="pricing">':
                 self._unit["price"] = float(data.replace("$", "").replace(",", ""))
 
     def handle_comment(self, data):
+        """Detect the start of a listing."""
         data = data.strip()
         if data.startswith("ledgerId"):
-            # Start of Listing
             ledger, building, unit = data.split(", ")
             self._unit = {
                 "ledger": ledger.split(" ")[1],
@@ -49,24 +50,27 @@ class EquityParser(HTMLParser):
             }
 
     def error(self, message):
-        pass
+        """Suppress errors."""
 
     def reset(self):
+        """Erase parser state."""
         self.units = []
         self._unit = None
         super().reset()
 
 
 class EquityScraper(BaseScraper):
-
     """Web Scraper for Equity Apartments"""
 
+    default_parser = EquityParser()
+
     def __init__(self, name, url, *args, **kwargs):
+        """Extend BaseScraper initialization."""
         super().__init__(*args, **kwargs)
         self.name = name
         self.url = url
 
-    def survey(self, scrape, parser=EquityParser()):
+    def survey(self, scrape, parser=default_parser):
         """Generate a RentSurvey from a Scrape."""
         parser.reset()
         parser.feed(scrape.text)
@@ -84,8 +88,9 @@ class EquityScraper(BaseScraper):
         """Scrape a RentSurvey from an Equity website."""
         return self.survey(
             self.scrape(
-                self.url, headers={"User-Agent": fake_useragent.UserAgent().random}
-            )
+                self.url,
+                headers={"User-Agent": fake_useragent.UserAgent().random},
+            ),
         )
 
     @property

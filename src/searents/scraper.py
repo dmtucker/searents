@@ -10,10 +10,10 @@ import requests
 
 
 class Scrape:  # pylint: disable=too-few-public-methods
-
     """Scraped Data and Associated Metadata"""
 
     def __init__(self, text, timestamp, url=None, path=None):
+        """Initialize scraped (meta)data."""
         self.text = text
         self.timestamp = timestamp
         self.url = url
@@ -21,13 +21,13 @@ class Scrape:  # pylint: disable=too-few-public-methods
 
 
 class BaseScraper:
-
     """Base Class for Searents Scrapers"""
 
     encoding = "utf-8"
     datetime_format = "%Y%m%dT%H%M%SZ.%f"
 
     def __init__(self, cache_path=None):
+        """Initialize cache_path."""
         self.cache_path = cache_path
 
     @property
