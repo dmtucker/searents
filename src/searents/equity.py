@@ -4,8 +4,6 @@ from html.parser import HTMLParser
 import logging
 from typing import Dict, List
 
-import fake_useragent
-
 from searents.scraper import BaseScraper
 from searents.survey import RentSurvey
 
@@ -86,12 +84,7 @@ class EquityScraper(BaseScraper):
 
     def scrape_survey(self):
         """Scrape a RentSurvey from an Equity website."""
-        return self.survey(
-            self.scrape(
-                self.url,
-                headers={"User-Agent": fake_useragent.UserAgent().random},
-            ),
-        )
+        return self.survey(self.scrape(self.url))
 
     @property
     def cache_survey(self):
