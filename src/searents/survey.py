@@ -150,7 +150,7 @@ class RentSurvey:
         try:
             episodes = [next(iterator)]
         except StopIteration as exc:
-            raise RuntimeError("This should never happen. (1)") from exc
+            raise RuntimeError("This should never happen.") from exc
         unit = episodes[-1][-1]["unit"]
         for episode in iterator:
             if episode[-1]["unit"] != unit:
@@ -169,7 +169,7 @@ class RentSurvey:
         try:
             unit_episodes = [next(iterator)]
         except StopIteration as exc:
-            raise RuntimeError("This should never happen. (2)") from exc
+            raise RuntimeError("This should never happen.") from exc
         url = unit_episodes[-1][-1][-1][-1]["url"]
         for unit, episodes in iterator:
             if episodes[-1][-1]["url"] != url:
