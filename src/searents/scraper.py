@@ -10,10 +10,10 @@ import requests
 
 
 class Scrape:  # pylint: disable=too-few-public-methods
-
     """Scraped Data and Associated Metadata"""
 
     def __init__(self, text, timestamp, url=None, path=None):
+        """Initialize scraped (meta)data."""
         self.text = text
         self.timestamp = timestamp
         self.url = url
@@ -21,13 +21,13 @@ class Scrape:  # pylint: disable=too-few-public-methods
 
 
 class BaseScraper:
-
     """Base Class for Searents Scrapers"""
 
-    encoding = 'utf-8'
-    datetime_format = '%Y%m%dT%H%M%SZ.%f'
+    encoding = "utf-8"
+    datetime_format = "%Y%m%dT%H%M%SZ.%f"
 
     def __init__(self, cache_path=None):
+        """Initialize cache_path."""
         self.cache_path = cache_path
 
     @property
@@ -56,16 +56,17 @@ class BaseScraper:
         if self.cache_path is not None:
             path = os.path.join(
                 self.cache_path,
-                '{timestamp}{extension}'.format(
+                "{timestamp}{extension}".format(
                     timestamp=timestamp.strftime(self.datetime_format),
                     extension=mimetypes.guess_extension(
-                        response.headers['content-type'].split(';')[0],
+                        response.headers["content-type"].split(";")[0],
                         strict=False,
-                    ) or '',
+                    )
+                    or "",
                 ),
             )
-            logging.info('Caching %s at %s...', response.request.url, path)
-            with open(path, 'w', encoding=self.encoding) as scrape_f:
+            logging.info("Caching %s at %s...", response.request.url, path)
+            with open(path, "w", encoding=self.encoding) as scrape_f:
                 scrape_f.write(response.text)
         return Scrape(
             text=response.text,
@@ -80,9 +81,9 @@ class BaseScraper:
         assert self.cache_path is not None
         for filename in os.listdir(self.cache_path):
             path = os.path.join(self.cache_path, filename)
-            with open(path, 'r', encoding=self.encoding) as scrape_f:
+            with open(path, "r", encoding=self.encoding) as scrape_f:
                 text = scrape_f.read()
-            timestamp_str, microsecond_str = os.path.splitext(filename)[0].split('.')
+            timestamp_str, microsecond_str = os.path.splitext(filename)[0].split(".")
             yield Scrape(
                 text=text,
                 timestamp=dateutil.parser.parse(timestamp_str).replace(
