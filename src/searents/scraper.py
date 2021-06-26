@@ -78,7 +78,8 @@ class BaseScraper:
     @property
     def cached_scrapes(self):
         """Load locally cached resources."""
-        assert self.cache_path is not None
+        if self.cache_path is None:
+            raise ValueError("cache_path is not set.")
         for filename in os.listdir(self.cache_path):
             path = os.path.join(self.cache_path, filename)
             with open(path, "r", encoding=self.encoding) as scrape_f:

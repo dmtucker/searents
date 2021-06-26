@@ -79,7 +79,8 @@ class EquityScraper(BaseScraper):
             unit["unit"] = " ".join([unit["building"], unit["unit"]])
             unit["url"] = scrape.url or self.url
             survey.listings.append(unit)
-        assert survey.is_valid()
+        if not survey.is_valid():
+            raise RuntimeError("The survey is no longer valid!")
         return survey
 
     def scrape_survey(self):
@@ -89,12 +90,14 @@ class EquityScraper(BaseScraper):
     @property
     def cache_survey(self):
         """Generate a RentSurvey from the Scrape cache."""
-        assert self.cache_path is not None
+        if self.cache_path is None:
+            raise ValueError("cache_path is not set.")
         survey = RentSurvey()
         for scrape in self.cached_scrapes:
             listings = self.survey(scrape).listings
             if not listings:
                 logging.warning("%s is empty.", scrape.path)
             survey.listings.extend(listings)
-        assert survey.is_valid()
+        if not survey.is_valid():
+            raise RuntimeError("The survey is no longer valid!")
         return survey
