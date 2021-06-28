@@ -8,7 +8,8 @@ https://packaging.python.org/en/latest/distributing.html
 https://github.com/pypa/sampleproject
 """
 
-from setuptools import setup, find_packages
+# https://github.com/pypa/setuptools/issues/2345
+from setuptools import setup, find_packages  # type: ignore
 
 with open("README.rst") as readme_file:
     README = readme_file.read()
@@ -29,9 +30,10 @@ setup(
     python_requires=">=3.6",
     setup_requires=["setuptools_scm >= 4.1"],
     install_requires=[
-        "fake_useragent>=0.1",
+        "attrs >= 21.2",
         "python-dateutil>=2.6",
         "requests>=2.20",
+        "setuptools>=57.0",
     ],
     extras_require={
         "visualizer": [
