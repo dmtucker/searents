@@ -64,8 +64,6 @@ class EquityParser(HTMLParser):
 class EquityScraper(BaseScraper):
     """Web Scraper for Equity Apartments"""
 
-    default_parser = EquityParser()
-
     def __init__(self, name: str, url: str, *args: Any, **kwargs: Any) -> None:
         """Extend BaseScraper initialization."""
         super().__init__(*args, **kwargs)
@@ -79,7 +77,7 @@ class EquityScraper(BaseScraper):
     ) -> RentSurvey:
         """Generate a RentSurvey from a Scrape."""
         if parser is None:
-            parser = self.default_parser
+            parser = EquityParser()
         parser.reset()
         parser.feed(scrape.text)
         survey = RentSurvey()

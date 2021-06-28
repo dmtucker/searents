@@ -36,8 +36,6 @@ class RentSurvey:
     Episode = List[RentListing]
     Episodes = List[Episode]
 
-    default_threshold = datetime.timedelta(weeks=1)
-
     def __init__(self, listings: Optional[Episode] = None) -> None:
         """Initialize listings."""
         self.listings = [] if listings is None else listings
@@ -77,7 +75,7 @@ class RentSurvey:
         timestamp (within a threshold of the previous listing).
         """
         if threshold is None:
-            threshold = self.default_threshold
+            threshold = datetime.timedelta(weeks=1)
         for url in {listing.url for listing in self.listings}:
             url_listings = [listing for listing in self.listings if listing.url == url]
             for unit in sorted({listing.unit for listing in url_listings}):
