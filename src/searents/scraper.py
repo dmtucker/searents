@@ -21,6 +21,10 @@ class Scrape:  # pylint: disable=too-few-public-methods
     path: Optional[str]
 
 
+class ScrapeError(Exception):
+    """Scraping data failed."""
+
+
 class BaseScraper:
     """Base Class for Searents Scrapers"""
 
@@ -48,11 +52,15 @@ class BaseScraper:
 
     def scrape(self, *args: Any, **kwargs: Any) -> Scrape:
         """GET a remote resource and save it."""
-        response, timestamp = (
-            requests.get(*args, **kwargs),
-            datetime.datetime.now(datetime.timezone.utc),
-        )
-        response.raise_for_status()
+        try:
+            response = requests.get(*args, **kwargs)
+        except requests.exceptions.ConnectionError as exc:
+            raise ScrapeError from exc
+        timestamp = datetime.datetime.now(datetime.timezone.utc)
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as exc:
+            raise ScrapeError from exc
         path = None
         if self.cache_path is not None:
             path = os.path.join(
