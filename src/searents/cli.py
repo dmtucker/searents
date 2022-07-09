@@ -12,6 +12,7 @@ from typing import Any, List, Optional
 import dateutil.parser
 
 import searents
+from searents.scraper import ScrapeError
 from searents.survey import RentListing, RentSurvey
 from searents.equity import EquityScraper
 
@@ -39,7 +40,12 @@ def fetch_handler(
     for scraper in scrapers:
 
         logging.info("Fetching new listings from %s...", scraper.name)
-        survey = scraper.scrape_survey()
+        try:
+            survey = scraper.scrape_survey()
+        except ScrapeError as exc:
+            logging.warning("New listings could not be fetched: %s", exc.__cause__)
+            print(f"Fetching {scraper.name} failed:", exc.__cause__, file=sys.stderr)
+            continue
 
         logging.info("%d new listings were fetched.", len(survey.listings))
         if survey.listings:
